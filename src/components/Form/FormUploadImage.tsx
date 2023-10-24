@@ -1,5 +1,5 @@
+import { ImageOutlined } from "@mui/icons-material";
 import {
-  Box,
   Button,
   Grid,
   InputLabelProps,
@@ -8,7 +8,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   FieldValues,
   UseControllerProps,
@@ -22,13 +22,20 @@ export const FormUploadImage = (
   props: InputLabelProps & TextFieldProps & UseControllerProps<FieldValues>
 ) => {
   const { name, control, rules, variant, ...rest } = props;
-  const [url, setUrl] = useState(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { field, fieldState } = useController({
     name,
     control,
     rules,
   });
   const error = Boolean(fieldState.error);
+  const url = useMemo(() => field.value, [field]);
+
+  const onClickOpenSelectFile = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, []);
 
   const onChange = useCallback(
     (event: any) => {
@@ -36,39 +43,54 @@ export const FormUploadImage = (
       if (!file) return;
       UploadFileToDiscordWebhook(file).then((linkUrl: any) => {
         if (!linkUrl) return;
-        field.value = linkUrl;
-        setUrl(linkUrl);
+        field.onChange(linkUrl);
       });
     },
     [field]
   );
 
   return (
-    <Grid container flexDirection={"column"}>
+    <Grid container>
       <Grid container display="none">
         <TextField
           variant={variant}
-          {...field}
           {...rest}
           type="file"
+          inputRef={fileInputRef}
           onChange={onChange}
           error={error}
         />
-        <FormHelpText fieldState={fieldState} />
       </Grid>
-      <Grid item xs={12} xl={6}>
+      <Grid item xs={12} md={8} xl={6}>
         {url ? (
-          <ButtonPreviewImage fullWidth>
-            <Box sx={{ width: "100%", aspectRatio: "9/5" }}>
-              <BoxImage src={url} />
-            </Box>
+          <ButtonPreviewImage fullWidth onClick={onClickOpenSelectFile}>
+            <BoxImage src={url} />
           </ButtonPreviewImage>
         ) : (
-          <ButtonSelectImage fullWidth variant="outlined">
-            <Box sx={{ width: "100%", aspectRatio: "9/5" }}>
-              <Typography textTransform={"none"}>Chọn Ảnh</Typography>
-            </Box>
-          </ButtonSelectImage>
+          <>
+            <ButtonSelectImage
+              fullWidth
+              color={error ? "error" : undefined}
+              variant="outlined"
+              onClick={onClickOpenSelectFile}
+              sx={{
+                mb: "8px",
+              }}
+            >
+              <Grid
+                item
+                xs="auto"
+                container
+                alignItems={"center"}
+                justifyContent={"center"}
+                columnGap={"8px"}
+              >
+                <Typography textTransform={"none"}>Chọn ảnh</Typography>
+                <ImageOutlined />
+              </Grid>
+            </ButtonSelectImage>
+            <FormHelpText fieldState={fieldState} />
+          </>
         )}
       </Grid>
     </Grid>
@@ -76,12 +98,13 @@ export const FormUploadImage = (
 };
 
 const ButtonSelectImage = styled(Button)({
-  display: "block",
   borderStyle: "dashed",
+  aspectRatio: "9/5",
 });
 
 const ButtonPreviewImage = styled(Button)({
   padding: "0",
   borderRadius: "4px",
   overflow: "hidden",
+  aspectRatio: "9/5",
 });

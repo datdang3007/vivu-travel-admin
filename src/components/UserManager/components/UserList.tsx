@@ -3,6 +3,7 @@ import { MaterialReactTable } from "material-react-table";
 import { UserProps } from "src/types/ApiData";
 import { ActionCell, TextCell } from "src/components/Cell";
 import { MRT_Localization_VI } from "material-react-table/locales/vi";
+import { PATH } from "src/routes/path";
 
 const dataTemp = [
   {
@@ -57,7 +58,7 @@ export const UserList = () => {
       {
         id: "button",
         header: "Thao Tác",
-        Cell: ActionCell,
+        Cell: ActionCell({ path: PATH.USER_MANAGER }),
         enableSorting: false,
         enableColumnActions: false,
       },

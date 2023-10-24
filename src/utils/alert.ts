@@ -15,3 +15,37 @@ export const AlertCustomAutoComplete = async (
     showConfirmButton: showConfirmBtn,
   });
 };
+
+export const showAlertSuccess = (
+  title?: string,
+  html?: string,
+  timer?: number
+) => {
+  return Swal.fire({
+    title,
+    html,
+    icon: "success",
+    showConfirmButton: false,
+    timer: timer ?? 2000,
+  });
+};
+
+export const showAlertConfirm = (
+  title?: string,
+  html?: string,
+  textOk?: string,
+  textCancel?: string
+) => {
+  return Swal.fire({
+    title: title ?? "",
+    html,
+    icon: "warning",
+    showConfirmButton: true,
+    showCancelButton: !!textCancel,
+    confirmButtonText: textOk ?? "Xác nhận",
+    cancelButtonText: textCancel ?? "Hủy",
+    showCloseButton: true,
+    reverseButtons: true,
+    focusCancel: true,
+  });
+};

@@ -7,3 +7,4 @@ export * from "./FormTitleWithButton";
 export * from "./FormInputImage";
 export * from "./FormTitleWithCheckBox";
 export * from "./FormUploadImage";
+export * from "./FormTextArea";

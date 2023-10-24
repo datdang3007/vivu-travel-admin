@@ -21,3 +21,9 @@ export const UploadFileToDiscordWebhook = (file: any) => {
       });
   });
 };
+
+// Get Id from param url:
+export const GetIdParams = (path: string) => {
+  const splitPath = path.split("/");
+  return splitPath.reverse()[0];
+};

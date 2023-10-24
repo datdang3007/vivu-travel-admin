@@ -78,7 +78,7 @@ export const PlaceList = () => {
       {
         id: "button",
         header: "Thao Tác",
-        Cell: ActionCell,
+        Cell: ActionCell({ path: PATH.PLACE }),
         enableSorting: false,
         enableColumnActions: false,
         enableGlobalFilter: false,

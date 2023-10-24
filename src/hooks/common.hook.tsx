@@ -1,8 +1,14 @@
 import { MenuItem } from "@mui/material";
 import { useCallback, useMemo } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getProvinceList } from "src/apis/province.api";
+import {
+  createProvince,
+  deleteProvince,
+  findProvinceByID,
+  getProvinceList,
+  updateProvince,
+} from "src/apis/province.api";
 import { getRegionList } from "src/apis/region.api";
 import { getTerritoryList } from "src/apis/territory.api";
 
@@ -28,7 +34,7 @@ export const useNavigateCRUD = (url: string) => {
   return { PageList, PageEdit, PageCreate };
 };
 
-// Hook call API:
+// Hook call API list:
 export const useCallApi = () => {
   const { data: regionList = [] } = useQuery(["getRegionList"], getRegionList);
 
@@ -37,12 +43,60 @@ export const useCallApi = () => {
     getTerritoryList
   );
 
-  const { data: provinceList = [] } = useQuery(
+  const { data: provinceList = [], refetch: refetchProvinceList } = useQuery(
     ["getProvinceList"],
     getProvinceList
   );
 
-  return { regionList, territoryList, provinceList };
+  return { regionList, territoryList, provinceList, refetchProvinceList };
+};
+
+// Hook call API find:
+export function useCallAPIFind() {
+  const {
+    mutateAsync: requestFindProvinceByID,
+    isLoading: loadingFindProvince,
+  } = useMutation({
+    mutationFn: findProvinceByID,
+  });
+
+  return { requestFindProvinceByID, loadingFindProvince };
+}
+
+// Hook call API create:
+export const useCallAPICreate = () => {
+  const {
+    mutateAsync: requestCreateProvince,
+    isLoading: loadingCreateProvince,
+  } = useMutation({
+    mutationFn: createProvince,
+  });
+
+  return { requestCreateProvince, loadingCreateProvince };
+};
+
+// Hook call API update:
+export const useCallAPIUpdate = () => {
+  const {
+    mutateAsync: requestUpdateProvince,
+    isLoading: loadingUpdateProvince,
+  } = useMutation({
+    mutationFn: updateProvince,
+  });
+
+  return { requestUpdateProvince, loadingUpdateProvince };
+};
+
+// Hook call API delete:
+export const useCallAPIDelete = () => {
+  const {
+    mutateAsync: requestDeleteProvince,
+    isLoading: loadingDeleteProvince,
+  } = useMutation({
+    mutationFn: deleteProvince,
+  });
+
+  return { requestDeleteProvince, loadingDeleteProvince };
 };
 
 // Hook format select from API data:
@@ -63,10 +117,6 @@ export const useSelectHook = (data: any[], value?: string, label?: string) => {
   // Function render select field:
   const SelectField = useCallback(() => {
     const convertOptions = [...options];
-    convertOptions.unshift({
-      value: -1,
-      label: "Vui lòng chọn",
-    });
     return convertOptions.map((val) => (
       <MenuItem key={val.value} value={val.value}>
         {val.label}

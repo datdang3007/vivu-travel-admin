@@ -1,15 +1,25 @@
-import { Grid, styled } from "@mui/material";
+import { Button, Grid, Typography, styled } from "@mui/material";
+import { KeyboardBackspace } from "@mui/icons-material";
 import { FormProvider } from "react-hook-form";
-import { FormTitle, FormUploadImage, InputTextField } from "src/components/Form";
+import {
+  FormTextArea,
+  FormTitle,
+  FormUploadImage,
+  InputTextField,
+} from "src/components/Form";
 import { COLOR_PALLETTE } from "src/constants/color";
 import { useProvinceCreateHook } from "src/hooks";
 
 export const ProvinceCreateComponent = () => {
-  const { formCreate, territoryOptionComponent } = useProvinceCreateHook();
+  const { formCreate, onSubmit, onClickBackToList, territoryOptionComponent } =
+    useProvinceCreateHook();
 
   return (
     <Container item xs={12}>
       <Grid item xs={12}>
+        <Button startIcon={<KeyboardBackspace />} onClick={onClickBackToList}>
+          <Typography textTransform={"none"}>Trở lại</Typography>
+        </Button>
         <FormTitle title="Tạo Mới Tỉnh Thành">
           <FormProvider {...formCreate}>
             <Grid
@@ -19,6 +29,7 @@ export const ProvinceCreateComponent = () => {
               component={"form"}
               mt={"40px"}
               rowGap={"24px"}
+              onSubmit={onSubmit}
             >
               <Grid item xs={12}>
                 <InputTextField
@@ -30,18 +41,6 @@ export const ProvinceCreateComponent = () => {
                   inputProps={{
                     maxLength: 255,
                   }}
-                  rules={{
-                    required: "Giá trị không được để trống",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputTextField
-                  name="overview"
-                  fullWidth
-                  label="Tổng quan"
-                  placeholder="Nhập tổng quan"
-                  InputLabelProps={{ shrink: true }}
                   rules={{
                     required: "Giá trị không được để trống",
                   }}
@@ -64,6 +63,18 @@ export const ProvinceCreateComponent = () => {
                 </Grid>
               </Grid>
               <Grid item xs={12}>
+                <FormTextArea
+                  name="overview"
+                  fullWidth
+                  label="Tổng quan"
+                  placeholder="Nhập tổng quan"
+                  InputLabelProps={{ shrink: true }}
+                  rules={{
+                    required: "Giá trị không được để trống",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
                 <FormUploadImage
                   name="image"
                   fullWidth
@@ -73,6 +84,21 @@ export const ProvinceCreateComponent = () => {
                     required: "Giá trị không được để trống",
                   }}
                 />
+              </Grid>
+              <Grid container columnGap={"12px"}>
+                <Grid item xs={"auto"}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="success"
+                    type="submit"
+                    sx={{
+                      width: "140px",
+                    }}
+                  >
+                    <Typography textTransform={"none"}>Tạo</Typography>
+                  </Button>
+                </Grid>
               </Grid>
             </Grid>
           </FormProvider>
@@ -85,7 +111,6 @@ export const ProvinceCreateComponent = () => {
 const Container = styled(Grid)({
   margin: "25px 25px",
   padding: "25px",
-  maxHeight: "calc(100vh - 50px)",
   background: COLOR_PALLETTE.WHITE,
   boxShadow: `rgba(0, 0, 0, 0.16) 0px 1px 4px`,
 });

@@ -1,24 +1,10 @@
 import { Box, Grid } from "@mui/material";
-import {
-  MRT_Cell,
-  MRT_Column,
-  MRT_Row,
-  MRT_TableInstance,
-} from "material-react-table";
-import { ReactNode } from "react";
 import { BoxImage } from "src/UI";
-
-type Props<T extends Record<string, any>> = {
-  cell: MRT_Cell<T>;
-  renderedCellValue: number | string | ReactNode;
-  column: MRT_Column<T>;
-  row: MRT_Row<T>;
-  table: MRT_TableInstance<T>;
-};
+import { MuiTableCellProps } from "src/types/MuiTable";
 
 export function ImageCell<T extends Record<string, any>>({
   cell,
-}: Props<T>) {
+}: MuiTableCellProps<T>) {
   const image = (cell?.getValue() ?? "") as string;
 
   return (
