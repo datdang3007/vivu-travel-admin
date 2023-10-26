@@ -94,7 +94,7 @@ export const RegionEditComponent = () => {
                       width: "140px",
                     }}
                   >
-                    <Typography textTransform={"none"}>Tạo</Typography>
+                    <Typography textTransform={"none"}>Sửa</Typography>
                   </Button>
                 </Grid>
               </Grid>

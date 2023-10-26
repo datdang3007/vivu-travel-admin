@@ -11,13 +11,13 @@ import { COLOR_PALLETTE } from "src/constants/color";
 import { useProvinceEditHook } from "src/hooks";
 
 export const ProvinceEditComponent = () => {
-  const { formEdit, onSubmit, onClickBackToList, territoryOptionComponent } =
+  const { formEdit, onSubmit, PageList, territoryOptionComponent } =
     useProvinceEditHook();
 
   return (
     <Container item xs={12}>
       <Grid item xs={12}>
-        <Button startIcon={<KeyboardBackspace />} onClick={onClickBackToList}>
+        <Button startIcon={<KeyboardBackspace />} onClick={PageList}>
           <Typography textTransform={"none"}>Trở lại</Typography>
         </Button>
         <FormTitle title="Sửa Tỉnh Thành">

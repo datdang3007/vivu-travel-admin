@@ -16,7 +16,13 @@ import {
   getRegionList,
   updateRegion,
 } from "src/apis/region.api";
-import { getTerritoryList } from "src/apis/territory.api";
+import {
+  createTerritory,
+  deleteTerritory,
+  findTerritoryByID,
+  getTerritoryList,
+  updateTerritory,
+} from "src/apis/territory.api";
 
 // Hook navigate to CRUD page entity:
 export const useNavigateCRUD = (url: string) => {
@@ -42,9 +48,12 @@ export const useNavigateCRUD = (url: string) => {
 
 // Hook call API list:
 export const useCallApi = () => {
-  const { data: regionList = [] } = useQuery(["getRegionList"], getRegionList);
+  const { data: regionList = [], refetch: refetchRegionList } = useQuery(
+    ["getRegionList"],
+    getRegionList
+  );
 
-  const { data: territoryList = [], refetch: refetchRegionList } = useQuery(
+  const { data: territoryList = [], refetch: refetchTerritoryList } = useQuery(
     ["getTerritoryList"],
     getTerritoryList
   );
@@ -56,10 +65,11 @@ export const useCallApi = () => {
 
   return {
     regionList,
+    refetchRegionList,
     territoryList,
+    refetchTerritoryList,
     provinceList,
     refetchProvinceList,
-    refetchRegionList,
   };
 };
 
@@ -70,6 +80,14 @@ export function useCallAPIFind() {
     useMutation({
       mutationFn: findRegionByID,
     });
+
+  // Territory
+  const {
+    mutateAsync: requestFindTerritoryByID,
+    isLoading: loadingFindTerritory,
+  } = useMutation({
+    mutationFn: findTerritoryByID,
+  });
 
   // Province
   const {
@@ -84,6 +102,8 @@ export function useCallAPIFind() {
     loadingFindProvince,
     requestFindRegionByID,
     loadingFindRegion,
+    requestFindTerritoryByID,
+    loadingFindTerritory,
   };
 }
 
@@ -94,6 +114,14 @@ export const useCallAPICreate = () => {
     useMutation({
       mutationFn: createRegion,
     });
+
+  // Territory
+  const {
+    mutateAsync: requestCreateTerritory,
+    isLoading: loadingCreateTerritory,
+  } = useMutation({
+    mutationFn: createTerritory,
+  });
 
   // Province
   const {
@@ -108,6 +136,8 @@ export const useCallAPICreate = () => {
     loadingCreateProvince,
     requestCreateRegion,
     loadingCreateRegion,
+    requestCreateTerritory,
+    loadingCreateTerritory,
   };
 };
 
@@ -118,6 +148,14 @@ export const useCallAPIUpdate = () => {
     useMutation({
       mutationFn: updateRegion,
     });
+
+  // Territory
+  const {
+    mutateAsync: requestUpdateTerritory,
+    isLoading: loadingUpdateTerritory,
+  } = useMutation({
+    mutationFn: updateTerritory,
+  });
 
   // Province
   const {
@@ -132,6 +170,8 @@ export const useCallAPIUpdate = () => {
     loadingUpdateProvince,
     requestUpdateRegion,
     loadingUpdateRegion,
+    requestUpdateTerritory,
+    loadingUpdateTerritory,
   };
 };
 
@@ -142,6 +182,14 @@ export const useCallAPIDelete = () => {
     useMutation({
       mutationFn: deleteRegion,
     });
+
+  // Territory
+  const {
+    mutateAsync: requestDeleteTerritory,
+    isLoading: loadingDeleteTerritory,
+  } = useMutation({
+    mutationFn: deleteTerritory,
+  });
 
   // Province
   const {
@@ -156,6 +204,8 @@ export const useCallAPIDelete = () => {
     loadingDeleteProvince,
     requestDeleteRegion,
     loadingDeleteRegion,
+    requestDeleteTerritory,
+    loadingDeleteTerritory,
   };
 };
 

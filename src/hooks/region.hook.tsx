@@ -1,8 +1,12 @@
 import { Grid } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 import { CardItem } from "src/UI";
 import { IRegion } from "src/interfaces";
 import { PATH } from "src/routes/path";
+import { showAlertConfirm, showAlertSuccess } from "src/utils/alert";
+import { GetIdParams } from "src/utils/common";
 import {
   useCallAPICreate,
   useCallAPIDelete,
@@ -11,16 +15,11 @@ import {
   useCallApi,
   useNavigateCRUD,
 } from "./common.hook";
-import { useForm } from "react-hook-form";
-import { showAlertSuccess } from "src/utils/alert";
-import { GetIdParams } from "src/utils/common";
-import { useLocation } from "react-router-dom";
 
 const url = PATH.REGION;
 
 // Hook for list page:
 export const useRegionListHook = () => {
-  const [regionData, setRegionData] = useState<IRegion[]>([]);
   const { PageCreate, PageEdit } = useNavigateCRUD(url);
   const { regionList, refetchRegionList } = useCallApi();
   const { requestDeleteRegion } = useCallAPIDelete();
@@ -28,9 +27,18 @@ export const useRegionListHook = () => {
   // EVENT WHEN CLICK BUTTON DELETE:
   const onDelete = useCallback(
     (id: string) => {
-      requestDeleteRegion(id).then(() => {
-        showAlertSuccess("Xóa thành công", "Đã xóa thành công!");
-        refetchRegionList();
+      showAlertConfirm(
+        "Xác nhận",
+        "Bạn có chắc muốn xóa không?",
+        "Xóa",
+        "Hủy"
+      ).then((res) => {
+        if (res.isConfirmed) {
+          requestDeleteRegion(id).then(() => {
+            showAlertSuccess("Xóa thành công", "Đã xóa thành công!");
+            refetchRegionList();
+          });
+        }
       });
     },
     [refetchRegionList, requestDeleteRegion]
@@ -38,7 +46,7 @@ export const useRegionListHook = () => {
 
   const renderCardComponent = useCallback(
     () =>
-      regionData.map((val: IRegion) => (
+      regionList.map((val: IRegion) => (
         <Grid key={val.id} item sm={12} md={6} xl={4} padding={"15px"}>
           <CardItem
             name={val.name}
@@ -49,14 +57,10 @@ export const useRegionListHook = () => {
           />
         </Grid>
       )),
-    [PageEdit, onDelete, regionData]
+    [PageEdit, onDelete, regionList]
   );
 
-  useEffect(() => {
-    setRegionData(regionList);
-  }, [regionList]);
-
-  return { regionList, renderCardComponent, PageCreate };
+  return { renderCardComponent, PageCreate };
 };
 
 // Hook for create page:

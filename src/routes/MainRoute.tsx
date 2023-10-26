@@ -11,7 +11,9 @@ import {
   RegionList,
   StaffManager,
   Statistics,
-  Territory,
+  TerritoryCreate,
+  TerritoryEdit,
+  TerritoryList,
   UserManager,
 } from "src/pages";
 import { ImageList } from "src/pages/ImageList";
@@ -53,7 +55,15 @@ const protectedRoute: RouteObject = {
         // TERRITORY:
         {
           path: PATH.TERRITORY,
-          element: <Territory />,
+          element: <TerritoryList />,
+        },
+        {
+          path: `${PATH.TERRITORY}/edit/:id`,
+          element: <TerritoryEdit />,
+        },
+        {
+          path: `${PATH.TERRITORY}/create`,
+          element: <TerritoryCreate />,
         },
 
         // PROVINCE:

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ActionCell, ImageCell, TextCell } from "src/components/Cell";
 import { IProvince } from "src/interfaces/province.interface";
 import { PATH } from "src/routes/path";
-import { showAlertSuccess } from "src/utils/alert";
+import { showAlertConfirm, showAlertSuccess } from "src/utils/alert";
 import { GetIdParams } from "src/utils/common";
 import {
   useCallAPICreate,
@@ -35,9 +35,18 @@ export const useProvinceListHook = () => {
   // EVENT WHEN CLICK BUTTON DELETE:
   const handleActionDelete = useCallback(
     (id: string) => {
-      requestDeleteProvince(id).then(() => {
-        showAlertSuccess("Xóa thành công", "Đã xóa thành công!");
-        refetchProvinceList();
+      showAlertConfirm(
+        "Xác nhận",
+        "Bạn có chắc muốn xóa không?",
+        "Xóa",
+        "Hủy"
+      ).then((res) => {
+        if (res.isConfirmed) {
+          requestDeleteProvince(id).then(() => {
+            showAlertSuccess("Xóa thành công", "Đã xóa thành công!");
+            refetchProvinceList();
+          });
+        }
       });
     },
     [refetchProvinceList, requestDeleteProvince]
@@ -140,10 +149,10 @@ export const useProvinceCreateHook = () => {
 export const useProvinceEditHook = () => {
   const location = useLocation();
   const provinceID = GetIdParams(location.pathname);
+  const { PageList } = useNavigateCRUD(url);
   const { territoryList } = useCallApi();
   const { requestFindProvinceByID } = useCallAPIFind();
   const { requestUpdateProvince } = useCallAPIUpdate();
-  const navigate = useNavigate();
   const { SelectField: territoryOptionComponent } =
     useSelectHook(territoryList);
 
@@ -154,11 +163,6 @@ export const useProvinceEditHook = () => {
   });
 
   const { handleSubmit, reset } = formEdit;
-
-  // HANDLE EVENT:
-  const onClickBackToList = useCallback(() => {
-    navigate(PATH.PROVINCE);
-  }, [navigate]);
 
   const onSubmit = handleSubmit(
     useCallback(
@@ -173,10 +177,10 @@ export const useProvinceEditHook = () => {
             "Cập nhật thành công",
             "đã cập nhật Tỉnh Thành mới thành công!"
           );
-          setTimeout(() => onClickBackToList(), 2000);
+          setTimeout(() => PageList(), 2000);
         });
       },
-      [onClickBackToList, provinceID, requestUpdateProvince]
+      [PageList, provinceID, requestUpdateProvince]
     )
   );
 
@@ -187,5 +191,5 @@ export const useProvinceEditHook = () => {
     });
   }, [provinceID, requestFindProvinceByID, reset]);
 
-  return { formEdit, onSubmit, onClickBackToList, territoryOptionComponent };
+  return { formEdit, onSubmit, PageList, territoryOptionComponent };
 };

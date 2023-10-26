@@ -2,10 +2,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button, Grid, Typography, styled } from "@mui/material";
 import { FormTitleWithButton } from "src/components/Form";
 import { COLOR_PALLETTE } from "src/constants/color";
-import { useTerritoryHook } from "src/hooks";
+import { useTerritoryListHook } from "src/hooks";
 
-export const TerritoryContainer = () => {
-  const { renderCardComponent } = useTerritoryHook();
+export const TerritoryListComponent = () => {
+  const { renderCardComponent, PageCreate } = useTerritoryListHook();
 
   return (
     <Container item xs={12}>
@@ -13,7 +13,11 @@ export const TerritoryContainer = () => {
         <FormTitleWithButton
           title={"Vùng"}
           buttonComponent={
-            <ButtonCreate color="success" variant="contained">
+            <ButtonCreate
+              color="success"
+              variant="contained"
+              onClick={PageCreate}
+            >
               <Grid item container>
                 <AddIcon />
                 <Typography textTransform={"none"}>Thêm</Typography>
