@@ -21,9 +21,16 @@ const url = PATH.PROVINCE;
 // Hook for list page:
 export const useProvinceListHook = () => {
   const [provinceData, setProvinceData] = useState<IProvince[]>([]);
-  const { PageList, PageEdit, PageCreate } = useNavigateCRUD(url);
+  const { PageEdit, PageCreate } = useNavigateCRUD(url);
   const { requestDeleteProvince } = useCallAPIDelete();
   const { provinceList, refetchProvinceList } = useCallApi();
+
+  const handleActionEdit = useCallback(
+    (id: string) => {
+      PageEdit(id);
+    },
+    [PageEdit]
+  );
 
   // EVENT WHEN CLICK BUTTON DELETE:
   const handleActionDelete = useCallback(
@@ -71,7 +78,7 @@ export const useProvinceListHook = () => {
         id: "button",
         header: "Thao Tác",
         Cell: ActionCell({
-          path: PATH.PROVINCE,
+          onEdit: handleActionEdit,
           onDelete: handleActionDelete,
         }),
         enableSorting: false,
@@ -80,7 +87,7 @@ export const useProvinceListHook = () => {
         size: 140,
       },
     ],
-    [handleActionDelete]
+    [handleActionDelete, handleActionEdit]
   );
 
   useEffect(() => {
@@ -89,7 +96,6 @@ export const useProvinceListHook = () => {
 
   return {
     columns,
-    PageList,
     PageEdit,
     PageCreate,
     provinceData,
@@ -99,8 +105,8 @@ export const useProvinceListHook = () => {
 // Hook for create page:
 export const useProvinceCreateHook = () => {
   const { territoryList } = useCallApi();
+  const { PageList } = useNavigateCRUD(url);
   const { requestCreateProvince } = useCallAPICreate();
-  const navigate = useNavigate();
   const { SelectField: territoryOptionComponent } =
     useSelectHook(territoryList);
 
@@ -112,27 +118,22 @@ export const useProvinceCreateHook = () => {
 
   const { handleSubmit } = formCreate;
 
-  // HANDLE EVENT:
-  const onClickBackToList = useCallback(() => {
-    navigate(PATH.PROVINCE);
-  }, [navigate]);
-
   const onSubmit = handleSubmit(
     useCallback(
       (data: any) => {
         requestCreateProvince(data).then(() => {
           showAlertSuccess(
-            "Cập nhật thành công",
-            "đã cập nhật Tỉnh thành mới thành công!"
+            "Tạo mới thành công",
+            "đã tạo Tỉnh Thành mới thành công!"
           );
-          setTimeout(() => onClickBackToList(), 2000);
+          setTimeout(() => PageList(), 2000);
         });
       },
-      [onClickBackToList, requestCreateProvince]
+      [PageList, requestCreateProvince]
     )
   );
 
-  return { formCreate, onSubmit, onClickBackToList, territoryOptionComponent };
+  return { formCreate, onSubmit, PageList, territoryOptionComponent };
 };
 
 // Hook for edit page:
@@ -146,13 +147,13 @@ export const useProvinceEditHook = () => {
   const { SelectField: territoryOptionComponent } =
     useSelectHook(territoryList);
 
-  const formCreate = useForm({
+  const formEdit = useForm({
     defaultValues: {
       territory: "",
     },
   });
 
-  const { handleSubmit, reset } = formCreate;
+  const { handleSubmit, reset } = formEdit;
 
   // HANDLE EVENT:
   const onClickBackToList = useCallback(() => {
@@ -170,7 +171,7 @@ export const useProvinceEditHook = () => {
         requestUpdateProvince(dataSubmit).then(() => {
           showAlertSuccess(
             "Cập nhật thành công",
-            "đã cập nhật Tỉnh thành mới thành công!"
+            "đã cập nhật Tỉnh Thành mới thành công!"
           );
           setTimeout(() => onClickBackToList(), 2000);
         });
@@ -186,5 +187,5 @@ export const useProvinceEditHook = () => {
     });
   }, [provinceID, requestFindProvinceByID, reset]);
 
-  return { formCreate, onSubmit, onClickBackToList, territoryOptionComponent };
+  return { formEdit, onSubmit, onClickBackToList, territoryOptionComponent };
 };

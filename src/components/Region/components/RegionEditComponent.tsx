@@ -1,5 +1,5 @@
-import { Button, Grid, Typography, styled } from "@mui/material";
 import { KeyboardBackspace } from "@mui/icons-material";
+import { Button, Grid, Typography, styled } from "@mui/material";
 import { FormProvider } from "react-hook-form";
 import {
   FormTextArea,
@@ -8,19 +8,18 @@ import {
   InputTextField,
 } from "src/components/Form";
 import { COLOR_PALLETTE } from "src/constants/color";
-import { useProvinceEditHook } from "src/hooks";
+import { useRegionEditHook } from "src/hooks";
 
-export const ProvinceEditComponent = () => {
-  const { formEdit, onSubmit, onClickBackToList, territoryOptionComponent } =
-    useProvinceEditHook();
+export const RegionEditComponent = () => {
+  const { formEdit, PageList, onSubmit } = useRegionEditHook();
 
   return (
     <Container item xs={12}>
       <Grid item xs={12}>
-        <Button startIcon={<KeyboardBackspace />} onClick={onClickBackToList}>
+        <Button startIcon={<KeyboardBackspace />} onClick={PageList}>
           <Typography textTransform={"none"}>Trở lại</Typography>
         </Button>
-        <FormTitle title="Sửa Tỉnh Thành">
+        <FormTitle title="Sửa Miền">
           <FormProvider {...formEdit}>
             <Grid
               item
@@ -36,7 +35,7 @@ export const ProvinceEditComponent = () => {
                   name="name"
                   fullWidth
                   label="Tên"
-                  placeholder="Nhập tên tỉnh thành"
+                  placeholder="Nhập tên miền"
                   InputLabelProps={{ shrink: true }}
                   inputProps={{
                     maxLength: 255,
@@ -46,21 +45,20 @@ export const ProvinceEditComponent = () => {
                   }}
                 />
               </Grid>
-              <Grid container justifyContent={"space-between"} rowGap={"24px"}>
-                <Grid item xs={12}>
-                  <InputTextField
-                    name="territory"
-                    fullWidth
-                    select
-                    label="Vùng"
-                    InputLabelProps={{ shrink: true }}
-                    rules={{
-                      required: "Giá trị không được để trống",
-                    }}
-                  >
-                    {territoryOptionComponent()}
-                  </InputTextField>
-                </Grid>
+              <Grid item xs={12}>
+                <InputTextField
+                  name="slogan"
+                  fullWidth
+                  label="Khẩu hiệu"
+                  placeholder="Nhập khẩu hiệu"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{
+                    maxLength: 255,
+                  }}
+                  rules={{
+                    required: "Giá trị không được để trống",
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <FormTextArea
@@ -96,7 +94,7 @@ export const ProvinceEditComponent = () => {
                       width: "140px",
                     }}
                   >
-                    <Typography textTransform={"none"}>Sửa</Typography>
+                    <Typography textTransform={"none"}>Tạo</Typography>
                   </Button>
                 </Grid>
               </Grid>

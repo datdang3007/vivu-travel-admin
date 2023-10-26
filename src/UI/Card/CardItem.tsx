@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 export const CardItem = (props: CardItemProps) => {
-  const { name, slogan, img } = props;
+  const { name, slogan, img, onEdit, onDelete } = props;
 
   return (
     <CardComponent>
@@ -46,7 +46,12 @@ export const CardItem = (props: CardItemProps) => {
             columnGap={"10px"}
             xs={12}
           >
-            <ButtonEdit variant="contained" size="small" color="success">
+            <ButtonEdit
+              variant="contained"
+              size="small"
+              color="success"
+              onClick={onEdit}
+            >
               <Typography fontSize={14} textTransform={"none"}>
                 Sửa
               </Typography>
@@ -56,7 +61,12 @@ export const CardItem = (props: CardItemProps) => {
                 Chi Tiết
               </Typography>
             </ButtonDetail>
-            <ButtonDelete variant="contained" size="small" color="error">
+            <ButtonDelete
+              variant="contained"
+              size="small"
+              color="error"
+              onClick={onDelete}
+            >
               <Typography fontSize={14} textTransform={"none"}>
                 Xóa
               </Typography>

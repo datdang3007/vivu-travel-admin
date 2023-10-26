@@ -3,8 +3,12 @@ import ScrollToTop from "src/components/ScrollToTop";
 import { MainLayout } from "src/layouts";
 import {
   Place,
+  ProvinceCreate,
+  ProvinceEdit,
   ProvinceList,
-  Region,
+  RegionCreate,
+  RegionEdit,
+  RegionList,
   StaffManager,
   Statistics,
   Territory,
@@ -12,8 +16,6 @@ import {
 } from "src/pages";
 import { ImageList } from "src/pages/ImageList";
 import { PATH } from "./path";
-import { ProvinceEdit } from "src/pages/Province/edit";
-import { ProvinceCreate } from "src/pages/Province/create";
 
 const protectedRoute: RouteObject = {
   element: <MainLayout />,
@@ -37,7 +39,15 @@ const protectedRoute: RouteObject = {
         // REGION:
         {
           path: PATH.REGION,
-          element: <Region />,
+          element: <RegionList />,
+        },
+        {
+          path: `${PATH.REGION}/edit/:id`,
+          element: <RegionEdit />,
+        },
+        {
+          path: `${PATH.REGION}/create`,
+          element: <RegionCreate />,
         },
 
         // TERRITORY:

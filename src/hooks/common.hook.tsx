@@ -9,7 +9,13 @@ import {
   getProvinceList,
   updateProvince,
 } from "src/apis/province.api";
-import { getRegionList } from "src/apis/region.api";
+import {
+  createRegion,
+  deleteRegion,
+  findRegionByID,
+  getRegionList,
+  updateRegion,
+} from "src/apis/region.api";
 import { getTerritoryList } from "src/apis/territory.api";
 
 // Hook navigate to CRUD page entity:
@@ -38,7 +44,7 @@ export const useNavigateCRUD = (url: string) => {
 export const useCallApi = () => {
   const { data: regionList = [] } = useQuery(["getRegionList"], getRegionList);
 
-  const { data: territoryList = [] } = useQuery(
+  const { data: territoryList = [], refetch: refetchRegionList } = useQuery(
     ["getTerritoryList"],
     getTerritoryList
   );
@@ -48,11 +54,24 @@ export const useCallApi = () => {
     getProvinceList
   );
 
-  return { regionList, territoryList, provinceList, refetchProvinceList };
+  return {
+    regionList,
+    territoryList,
+    provinceList,
+    refetchProvinceList,
+    refetchRegionList,
+  };
 };
 
 // Hook call API find:
 export function useCallAPIFind() {
+  // Region
+  const { mutateAsync: requestFindRegionByID, isLoading: loadingFindRegion } =
+    useMutation({
+      mutationFn: findRegionByID,
+    });
+
+  // Province
   const {
     mutateAsync: requestFindProvinceByID,
     isLoading: loadingFindProvince,
@@ -60,11 +79,23 @@ export function useCallAPIFind() {
     mutationFn: findProvinceByID,
   });
 
-  return { requestFindProvinceByID, loadingFindProvince };
+  return {
+    requestFindProvinceByID,
+    loadingFindProvince,
+    requestFindRegionByID,
+    loadingFindRegion,
+  };
 }
 
 // Hook call API create:
 export const useCallAPICreate = () => {
+  // Region
+  const { mutateAsync: requestCreateRegion, isLoading: loadingCreateRegion } =
+    useMutation({
+      mutationFn: createRegion,
+    });
+
+  // Province
   const {
     mutateAsync: requestCreateProvince,
     isLoading: loadingCreateProvince,
@@ -72,11 +103,23 @@ export const useCallAPICreate = () => {
     mutationFn: createProvince,
   });
 
-  return { requestCreateProvince, loadingCreateProvince };
+  return {
+    requestCreateProvince,
+    loadingCreateProvince,
+    requestCreateRegion,
+    loadingCreateRegion,
+  };
 };
 
 // Hook call API update:
 export const useCallAPIUpdate = () => {
+  // Region
+  const { mutateAsync: requestUpdateRegion, isLoading: loadingUpdateRegion } =
+    useMutation({
+      mutationFn: updateRegion,
+    });
+
+  // Province
   const {
     mutateAsync: requestUpdateProvince,
     isLoading: loadingUpdateProvince,
@@ -84,11 +127,23 @@ export const useCallAPIUpdate = () => {
     mutationFn: updateProvince,
   });
 
-  return { requestUpdateProvince, loadingUpdateProvince };
+  return {
+    requestUpdateProvince,
+    loadingUpdateProvince,
+    requestUpdateRegion,
+    loadingUpdateRegion,
+  };
 };
 
 // Hook call API delete:
 export const useCallAPIDelete = () => {
+  // Region
+  const { mutateAsync: requestDeleteRegion, isLoading: loadingDeleteRegion } =
+    useMutation({
+      mutationFn: deleteRegion,
+    });
+
+  // Province
   const {
     mutateAsync: requestDeleteProvince,
     isLoading: loadingDeleteProvince,
@@ -96,7 +151,12 @@ export const useCallAPIDelete = () => {
     mutationFn: deleteProvince,
   });
 
-  return { requestDeleteProvince, loadingDeleteProvince };
+  return {
+    requestDeleteProvince,
+    loadingDeleteProvince,
+    requestDeleteRegion,
+    loadingDeleteRegion,
+  };
 };
 
 // Hook format select from API data:

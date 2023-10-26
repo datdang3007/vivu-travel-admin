@@ -1,1 +1,1 @@
-export * from "./components/RegionContainer";
+export * from "./components/RegionListComponent";

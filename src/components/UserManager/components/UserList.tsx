@@ -58,7 +58,7 @@ export const UserList = () => {
       {
         id: "button",
         header: "Thao Tác",
-        Cell: ActionCell({ path: PATH.USER_MANAGER }),
+        Cell: ActionCell({}),
         enableSorting: false,
         enableColumnActions: false,
       },

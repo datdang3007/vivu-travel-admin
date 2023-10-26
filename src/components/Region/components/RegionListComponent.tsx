@@ -2,10 +2,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button, Grid, Typography, styled } from "@mui/material";
 import { FormTitleWithButton } from "src/components/Form";
 import { COLOR_PALLETTE } from "src/constants/color";
-import { useRegionHook } from "src/hooks";
+import { useRegionListHook } from "src/hooks";
 
-export const RegionContainer = () => {
-  const { renderCardComponent } = useRegionHook();
+export const RegionListComponent = () => {
+  const { renderCardComponent, PageCreate } = useRegionListHook();
 
   return (
     <Container item xs={12}>
@@ -13,7 +13,11 @@ export const RegionContainer = () => {
         <FormTitleWithButton
           title={"Miền"}
           buttonComponent={
-            <ButtonCreate color="success" variant="contained">
+            <ButtonCreate
+              color="success"
+              variant="contained"
+              onClick={PageCreate}
+            >
               <Grid item container>
                 <AddIcon />
                 <Typography textTransform={"none"}>Thêm</Typography>

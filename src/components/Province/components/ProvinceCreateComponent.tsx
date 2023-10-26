@@ -1,5 +1,5 @@
-import { Button, Grid, Typography, styled } from "@mui/material";
 import { KeyboardBackspace } from "@mui/icons-material";
+import { Button, Grid, Typography, styled } from "@mui/material";
 import { FormProvider } from "react-hook-form";
 import {
   FormTextArea,
@@ -11,16 +11,16 @@ import { COLOR_PALLETTE } from "src/constants/color";
 import { useProvinceCreateHook } from "src/hooks";
 
 export const ProvinceCreateComponent = () => {
-  const { formCreate, onSubmit, onClickBackToList, territoryOptionComponent } =
+  const { formCreate, onSubmit, PageList, territoryOptionComponent } =
     useProvinceCreateHook();
 
   return (
     <Container item xs={12}>
       <Grid item xs={12}>
-        <Button startIcon={<KeyboardBackspace />} onClick={onClickBackToList}>
+        <Button startIcon={<KeyboardBackspace />} onClick={PageList}>
           <Typography textTransform={"none"}>Trở lại</Typography>
         </Button>
-        <FormTitle title="Tạo Mới Tỉnh Thành">
+        <FormTitle title="Tạo Tỉnh Thành Mới">
           <FormProvider {...formCreate}>
             <Grid
               item
