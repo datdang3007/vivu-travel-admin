@@ -2,7 +2,10 @@ import { RouteObject } from "react-router-dom";
 import ScrollToTop from "src/components/ScrollToTop";
 import { MainLayout } from "src/layouts";
 import {
-  Place,
+  PlaceCreate,
+  PlaceEdit,
+  PlaceImageStock,
+  PlaceList,
   ProvinceCreate,
   ProvinceEdit,
   ProvinceList,
@@ -16,7 +19,6 @@ import {
   TerritoryList,
   UserManager,
 } from "src/pages";
-import { ImageList } from "src/pages/ImageList";
 import { PATH } from "./path";
 
 const protectedRoute: RouteObject = {
@@ -36,6 +38,10 @@ const protectedRoute: RouteObject = {
         {
           path: PATH.STAFF_MANAGER,
           element: <StaffManager />,
+        },
+        {
+          path: `${PATH.IMAGE_STOCK}/place/:id`,
+          element: <PlaceImageStock />,
         },
 
         // REGION:
@@ -83,11 +89,15 @@ const protectedRoute: RouteObject = {
         // PLACE:
         {
           path: PATH.PLACE,
-          element: <Place />,
+          element: <PlaceList />,
         },
         {
-          path: PATH.IMAGE_LIST,
-          element: <ImageList />,
+          path: `${PATH.PLACE}/edit/:id`,
+          element: <PlaceEdit />,
+        },
+        {
+          path: `${PATH.PLACE}/create`,
+          element: <PlaceCreate />,
         },
       ],
     },

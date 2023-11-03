@@ -1,7 +1,13 @@
-import { ImageOutlined } from "@mui/icons-material";
+import { AttachFile, ImageOutlined } from "@mui/icons-material";
 import {
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabelProps,
   TextField,
   TextFieldProps,
@@ -15,14 +21,16 @@ import {
   useController,
 } from "react-hook-form";
 import { BoxImage } from "src/UI";
-import { UploadFileToDiscordWebhook } from "src/utils/common";
+import { CheckIsImageUrl, UploadFileToDiscordWebhook } from "src/utils/common";
 import { FormHelpText } from "./FormHelpText";
+import { showAlertError } from "src/utils/alert";
 
 export const FormUploadImage = (
   props: InputLabelProps & TextFieldProps & UseControllerProps<FieldValues>
 ) => {
   const { name, control, rules, variant, ...rest } = props;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputLinkRef = useRef<HTMLInputElement | null>(null);
   const { field, fieldState } = useController({
     name,
     control,
@@ -30,6 +38,19 @@ export const FormUploadImage = (
   });
   const error = Boolean(fieldState.error);
   const url = useMemo(() => field.value, [field]);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenDialog = useCallback(() => {
+    setOpenDialog(true);
+    setTimeout(() => {
+      if (fileInputLinkRef.current) {
+        fileInputLinkRef.current.focus();
+      }
+    }, 100);
+  }, []);
+  const handleCloseDialog = useCallback(() => {
+    setOpenDialog(false);
+  }, []);
 
   const onClickOpenSelectFile = useCallback(() => {
     if (fileInputRef.current) {
@@ -41,6 +62,7 @@ export const FormUploadImage = (
     (event: any) => {
       const file = event.target.files[0];
       if (!file) return;
+      setOpenDialog(false);
       UploadFileToDiscordWebhook(file).then((linkUrl: any) => {
         if (!linkUrl) return;
         field.onChange(linkUrl);
@@ -48,6 +70,28 @@ export const FormUploadImage = (
     },
     [field]
   );
+
+  const onClickSubmitLink = useCallback(async () => {
+    if (!fileInputLinkRef.current) return;
+    const imageUrl = fileInputLinkRef.current.value;
+    CheckIsImageUrl(imageUrl)
+      .then((isImage) => {
+        if (!isImage) {
+          return showAlertError(
+            "Lỗi !",
+            "Link ảnh không hợp lệ, vui lòng kiểm tra lại"
+          );
+        }
+        setOpenDialog(false);
+        field.onChange(imageUrl);
+      })
+      .catch((error) => {
+        showAlertError(
+          "Lỗi !",
+          `Lỗi xảy ra khi kiểm tra liên kết hình ảnh: ${error}`
+        );
+      });
+  }, [field]);
 
   return (
     <Grid container>
@@ -61,9 +105,9 @@ export const FormUploadImage = (
           error={error}
         />
       </Grid>
-      <Grid item xs={12} md={8} xl={6}>
+      <Grid item xs={12} xl={8}>
         {url ? (
-          <ButtonPreviewImage fullWidth onClick={onClickOpenSelectFile}>
+          <ButtonPreviewImage fullWidth onClick={handleOpenDialog}>
             <BoxImage src={url} />
           </ButtonPreviewImage>
         ) : (
@@ -72,7 +116,7 @@ export const FormUploadImage = (
               fullWidth
               color={error ? "error" : undefined}
               variant="outlined"
-              onClick={onClickOpenSelectFile}
+              onClick={handleOpenDialog}
               sx={{
                 mb: "8px",
               }}
@@ -93,6 +137,54 @@ export const FormUploadImage = (
           </>
         )}
       </Grid>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth={"sm"}
+        fullWidth
+      >
+        <DialogTitle>
+          <Typography
+            sx={{
+              fontSize: {
+                xs: 20,
+                sm: 22,
+                md: 24,
+              },
+              fontWeight: "bold",
+            }}
+          >
+            Chọn Ảnh
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Hình ảnh"
+            placeholder="Link URL"
+            inputRef={fileInputLinkRef}
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={onClickOpenSelectFile} edge="end">
+                    <AttachFile />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>
+            <Typography textTransform={"none"}>Đóng</Typography>
+          </Button>
+          <Button variant="contained" onClick={onClickSubmitLink}>
+            <Typography textTransform={"none"}>Chọn</Typography>
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };

@@ -49,3 +49,17 @@ export const showAlertConfirm = (
     focusCancel: true,
   });
 };
+
+export const showAlertError = (
+  title?: string,
+  html?: string,
+  textClose?: string
+) => {
+  return Swal.fire({
+    title,
+    html,
+    icon: "error",
+    confirmButtonText: textClose ?? 'Đóng',
+    showConfirmButton: true,
+  });
+};

@@ -27,3 +27,19 @@ export const GetIdParams = (path: string) => {
   const splitPath = path.split("/");
   return splitPath.reverse()[0];
 };
+
+export const CheckIsImageUrl = async (url: string) => {
+  return new Promise((resolve) => {
+    var img = new Image();
+    img.src = url;
+
+    img.onload = function () {
+      resolve(true);
+    };
+
+    img.onerror = function () {
+      resolve(false);
+    };
+  });
+};
+

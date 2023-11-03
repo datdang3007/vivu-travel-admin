@@ -4,7 +4,6 @@ import { ITerritory } from "./territory.interface";
 export interface IProvince {
   id: number;
   name: string;
-  slogan: string;
   image: string;
   overview: string;
   region: IRegion;

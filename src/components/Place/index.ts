@@ -1,1 +1,1 @@
-export * from "./components/PlaceContainer";
+export * from "./components/PlaceListComponent";

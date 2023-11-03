@@ -1,7 +1,7 @@
 import http from "src/config/http";
 import { ITerritory } from "src/interfaces";
 
-export interface updateTerritoryProps {
+export interface UpdateTerritoryProps {
   id: string;
   data: ITerritory[];
 }
@@ -17,7 +17,7 @@ export const createTerritory = async (data: ITerritory) => {
   return res.data;
 };
 
-export const updateTerritory = async ({ id, data }: updateTerritoryProps) => {
+export const updateTerritory = async ({ id, data }: UpdateTerritoryProps) => {
   const res = await http.patch(`${url}/${id}`, { ...data });
   return res.data;
 };

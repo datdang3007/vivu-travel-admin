@@ -15,6 +15,12 @@ export const rules = {
     if (isValid) return;
     return "Email không hợp lệ";
   },
+  validateImageURL: (link: string) => {
+    const regex = /\.(jpg|jpeg|png|webp|avif|gif|svg)$/;
+    const isValid = Boolean(regex.test(link));
+    if (isValid) return;
+    return "Link ảnh không hợp lệ";
+  },
   validatePassword: (password: string) => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,25}$/;

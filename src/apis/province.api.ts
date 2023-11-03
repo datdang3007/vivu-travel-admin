@@ -1,7 +1,7 @@
 import http from "src/config/http";
-import { IProvince } from "src/interfaces/province.interface";
+import { IProvince } from "src/interfaces";
 
-export interface updateProvinceProps {
+export interface UpdateProvinceProps {
   id: string;
   data: IProvince;
 }
@@ -17,7 +17,7 @@ export const createProvince = async (data: IProvince) => {
   return res.data;
 };
 
-export const updateProvince = async ({ id, data }: updateProvinceProps) => {
+export const updateProvince = async ({ id, data }: UpdateProvinceProps) => {
   const res = await http.patch(`${url}/${id}`, { ...data });
   return res.data;
 };

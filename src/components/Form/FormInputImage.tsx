@@ -11,6 +11,7 @@ import { useCallback } from "react";
 
 type Props = {
   id?: string;
+  createImage: (file: any) => void;
 };
 
 export const FormInputImage = (
@@ -18,41 +19,33 @@ export const FormInputImage = (
     UseControllerProps<FieldValues> &
     UseFieldArrayProps<FieldValues>
 ) => {
-  const { id, name, control, rules } = props;
+  const { id, createImage, name, control, rules } = props;
   const { fieldState } = useController({ name, control, rules });
   const error = Boolean(fieldState.error?.root?.message);
 
   // HANDLE EVENT:
-  const handleAttachFile = useCallback((data: any) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      const file = reader.result?.toString() ?? "";
-      console.log(file);
-    });
-    reader.readAsDataURL(data);
-  }, []);
-
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const data = e.target.files?.[0];
-      if (data) {
-        handleAttachFile(data);
+      const file = e.target.files;
+      if (file) {
+        createImage(file);
       }
       e.target.value = "";
     },
-    [handleAttachFile]
+    [createImage]
   );
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
-      const file = e.dataTransfer.files?.[0];
-      if (file) {
-        handleAttachFile(file);
+      const file = e.dataTransfer.files;
+      if (file[0]) {
+        createImage(file);
       }
     },
-    [handleAttachFile]
+    [createImage]
   );
+
   const onDrag = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   }, []);
@@ -79,7 +72,7 @@ export const FormInputImage = (
         <input
           type="file"
           hidden
-          multiple={false}
+          multiple
           accept=".jpg,.jpeg,.png"
           onChange={handleFileSelect}
         />

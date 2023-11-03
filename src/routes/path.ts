@@ -8,5 +8,5 @@ export const PATH = {
   TERRITORY: "/territory",
   PROVINCE: "/province",
   PLACE: "/place",
-  IMAGE_LIST: "/image-list",
+  IMAGE_STOCK: "/image-stock",
 };

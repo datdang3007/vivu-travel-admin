@@ -3,6 +3,17 @@ import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import {
+  createPlaceImage,
+  deletePlaceImage,
+  findPlaceImageByPlaceID,
+} from "src/apis/place-image-stock.api";
+import {
+  createPlace,
+  deletePlace,
+  findPlaceByID,
+  getPlaceList,
+} from "src/apis/place.api";
+import {
   createProvince,
   deleteProvince,
   findProvinceByID,
@@ -48,19 +59,28 @@ export const useNavigateCRUD = (url: string) => {
 
 // Hook call API list:
 export const useCallApi = () => {
+  // Region
   const { data: regionList = [], refetch: refetchRegionList } = useQuery(
     ["getRegionList"],
     getRegionList
   );
 
+  // Territory
   const { data: territoryList = [], refetch: refetchTerritoryList } = useQuery(
     ["getTerritoryList"],
     getTerritoryList
   );
 
+  // Province
   const { data: provinceList = [], refetch: refetchProvinceList } = useQuery(
     ["getProvinceList"],
     getProvinceList
+  );
+
+  // Place
+  const { data: placeList = [], refetch: refetchPlaceList } = useQuery(
+    ["getPlaceList"],
+    getPlaceList
   );
 
   return {
@@ -70,6 +90,8 @@ export const useCallApi = () => {
     refetchTerritoryList,
     provinceList,
     refetchProvinceList,
+    placeList,
+    refetchPlaceList,
   };
 };
 
@@ -97,6 +119,20 @@ export function useCallAPIFind() {
     mutationFn: findProvinceByID,
   });
 
+  // Place
+  const { mutateAsync: requestFindPlaceByID, isLoading: loadingFindPlace } =
+    useMutation({
+      mutationFn: findPlaceByID,
+    });
+
+  // Place Image
+  const {
+    mutateAsync: requestFindPlaceImageStockByPlaceID,
+    isLoading: loadingFindPlaceImageStockByPlaceID,
+  } = useMutation({
+    mutationFn: findPlaceImageByPlaceID,
+  });
+
   return {
     requestFindProvinceByID,
     loadingFindProvince,
@@ -104,6 +140,10 @@ export function useCallAPIFind() {
     loadingFindRegion,
     requestFindTerritoryByID,
     loadingFindTerritory,
+    requestFindPlaceByID,
+    loadingFindPlace,
+    requestFindPlaceImageStockByPlaceID,
+    loadingFindPlaceImageStockByPlaceID,
   };
 }
 
@@ -131,6 +171,20 @@ export const useCallAPICreate = () => {
     mutationFn: createProvince,
   });
 
+  // Place
+  const { mutateAsync: requestCreatePlace, isLoading: loadingCreatePlace } =
+    useMutation({
+      mutationFn: createPlace,
+    });
+
+  // Place Image Stock
+  const {
+    mutateAsync: requestCreatePlaceImage,
+    isLoading: loadingCreatePlaceImage,
+  } = useMutation({
+    mutationFn: createPlaceImage,
+  });
+
   return {
     requestCreateProvince,
     loadingCreateProvince,
@@ -138,6 +192,10 @@ export const useCallAPICreate = () => {
     loadingCreateRegion,
     requestCreateTerritory,
     loadingCreateTerritory,
+    requestCreatePlace,
+    loadingCreatePlace,
+    requestCreatePlaceImage,
+    loadingCreatePlaceImage,
   };
 };
 
@@ -199,6 +257,20 @@ export const useCallAPIDelete = () => {
     mutationFn: deleteProvince,
   });
 
+  // Place
+  const { mutateAsync: requestDeletePlace, isLoading: loadingDeletePlace } =
+    useMutation({
+      mutationFn: deletePlace,
+    });
+
+  // Place Image
+  const {
+    mutateAsync: requestDeletePlaceImage,
+    isLoading: loadingDeletePlaceImage,
+  } = useMutation({
+    mutationFn: deletePlaceImage,
+  });
+
   return {
     requestDeleteProvince,
     loadingDeleteProvince,
@@ -206,6 +278,10 @@ export const useCallAPIDelete = () => {
     loadingDeleteRegion,
     requestDeleteTerritory,
     loadingDeleteTerritory,
+    requestDeletePlace,
+    loadingDeletePlace,
+    requestDeletePlaceImage,
+    loadingDeletePlaceImage,
   };
 };
 

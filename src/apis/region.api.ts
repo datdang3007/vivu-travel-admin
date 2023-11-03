@@ -1,7 +1,7 @@
 import http from "src/config/http";
 import { IRegion } from "src/interfaces";
 
-export interface updateRegionProps {
+export interface UpdateRegionProps {
   id: string;
   data: IRegion[];
 }
@@ -17,7 +17,7 @@ export const createRegion = async (data: IRegion) => {
   return res.data;
 };
 
-export const updateRegion = async ({ id, data }: updateRegionProps) => {
+export const updateRegion = async ({ id, data }: UpdateRegionProps) => {
   const res = await http.patch(`${url}/${id}`, { ...data });
   return res.data;
 };

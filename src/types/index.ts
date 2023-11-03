@@ -28,6 +28,17 @@ export interface ListActionProps {
 
 export interface ItemImageListProps {
   id: string | number;
-  url: string;
+  link: string;
   active: boolean;
+}
+
+export interface ContentDataProps {
+  id: string | number;
+  type: number;
+  content: string;
+}
+
+export interface PlaceImageStockProps {
+  id: string | number;
+  link: string;
 }
