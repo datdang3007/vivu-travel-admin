@@ -3,6 +3,10 @@ import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import {
+  getPlaceCategoryList,
+  updatePlaceCategory,
+} from "src/apis/place-category.api";
+import {
   createPlaceImage,
   deletePlaceImage,
   findPlaceImageByPlaceID,
@@ -83,6 +87,10 @@ export const useCallApi = () => {
     getPlaceList
   );
 
+  // Place
+  const { data: placeCategoryList = [], refetch: refetchPlaceCategoryList } =
+    useQuery(["getPlaceCategoryList"], getPlaceCategoryList);
+
   return {
     regionList,
     refetchRegionList,
@@ -92,6 +100,8 @@ export const useCallApi = () => {
     refetchProvinceList,
     placeList,
     refetchPlaceList,
+    placeCategoryList,
+    refetchPlaceCategoryList,
   };
 };
 
@@ -223,6 +233,14 @@ export const useCallAPIUpdate = () => {
     mutationFn: updateProvince,
   });
 
+  // Place Category
+  const {
+    mutateAsync: requestUpdatePlaceCategory,
+    isLoading: loadingUpdatePlaceCategory,
+  } = useMutation({
+    mutationFn: updatePlaceCategory,
+  });
+
   return {
     requestUpdateProvince,
     loadingUpdateProvince,
@@ -230,6 +248,8 @@ export const useCallAPIUpdate = () => {
     loadingUpdateRegion,
     requestUpdateTerritory,
     loadingUpdateTerritory,
+    requestUpdatePlaceCategory,
+    loadingUpdatePlaceCategory,
   };
 };
 

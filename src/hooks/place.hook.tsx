@@ -11,6 +11,7 @@ import {
   useCallAPICreate,
   useCallAPIDelete,
   useCallAPIFind,
+  useCallAPIUpdate,
   useCallApi,
   useNavigateCRUD,
   useSelectHook,
@@ -21,10 +22,62 @@ const url = PATH.PLACE;
 // Hook for list page:
 export const usePlaceListHook = () => {
   const { PageCreate, PageEdit } = useNavigateCRUD(url);
-  const { placeList, refetchPlaceList } = useCallApi();
+  const {
+    placeList,
+    refetchPlaceList,
+    placeCategoryList,
+    refetchPlaceCategoryList,
+  } = useCallApi();
   const { requestDeletePlace } = useCallAPIDelete();
+  const { requestUpdatePlaceCategory } = useCallAPIUpdate();
   const [placeData, setPlaceData] = useState<any[]>([]);
+  const [placeCategoryData, setPlaceCategoryData] = useState<any[]>([]);
+  const [currentPlaceCategoryData, setCurrentPlaceCategoryData] = useState<
+    any[]
+  >([...placeCategoryData]);
+  const [openDialogPlaceCategory, setOpenDialogPlaceCategory] =
+    useState<boolean>(false);
 
+  // TOGGLE DIALOG PLACE CATEGORY:
+  const handleOpenDialogPlaceCategory = useCallback(() => {
+    setOpenDialogPlaceCategory(true);
+  }, []);
+  const handleCloseDialogPlaceCategory = useCallback(() => {
+    setOpenDialogPlaceCategory(false);
+  }, []);
+
+  // EVENT WHEN CLICK BUTTON SAVE IN DIALOG PLACE CATEGORY:
+  const handleUpdatePlaceCategory = useCallback(() => {
+    const dataConvert = [...currentPlaceCategoryData];
+    const dataNew = placeCategoryData.filter(
+      (val) => typeof val.id === "string"
+    );
+    dataConvert.forEach((val) => {
+      const dataExists = placeCategoryData.find((item) => item.id === val.id);
+      if (dataExists) {
+        val = dataExists;
+      } else {
+        val.delete = true;
+      }
+      return val;
+    });
+    const dataSubmit = [...dataConvert, ...dataNew];
+    requestUpdatePlaceCategory(dataSubmit).then(() => {
+      setOpenDialogPlaceCategory(false);
+      showAlertSuccess(
+        "Cập nhật thành công",
+        "Đã cập nhật phân loại địa điểm mới!"
+      );
+      refetchPlaceCategoryList();
+    });
+  }, [
+    currentPlaceCategoryData,
+    placeCategoryData,
+    refetchPlaceCategoryList,
+    requestUpdatePlaceCategory,
+  ]);
+
+  // ACTION OPEN EDIT PAGE:
   const handleActionEdit = useCallback(
     (id: string) => {
       PageEdit(id);
@@ -122,7 +175,26 @@ export const usePlaceListHook = () => {
     setPlaceData(convertData);
   }, [placeList]);
 
-  return { placeData, columns, PageCreate };
+  useEffect(() => {
+    const convertData = placeCategoryList.map(
+      (val: any) => (val.selected = false)
+    );
+    setPlaceCategoryData(convertData);
+    setCurrentPlaceCategoryData(placeCategoryList);
+  }, [placeCategoryList]);
+
+  return {
+    placeData,
+    columns,
+    PageCreate,
+    placeCategoryData,
+    setPlaceCategoryData,
+    openDialogPlaceCategory,
+    currentPlaceCategoryData,
+    handleUpdatePlaceCategory,
+    handleOpenDialogPlaceCategory,
+    handleCloseDialogPlaceCategory,
+  };
 };
 
 // Data content Init:

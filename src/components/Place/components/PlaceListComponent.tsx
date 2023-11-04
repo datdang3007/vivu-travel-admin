@@ -1,13 +1,25 @@
 import { FormTitleWithButton } from "src/components/Form";
 import { Button, Grid, Typography, styled } from "@mui/material";
 import { COLOR_PALLETTE } from "src/constants/color";
-import AddIcon from "@mui/icons-material/Add";
+import { Add, Label } from "@mui/icons-material";
 import MaterialReactTable from "material-react-table";
 import { MRT_Localization_VI } from "material-react-table/locales/vi";
 import { usePlaceListHook } from "src/hooks/place.hook";
+import { DialogPlaceCategory } from "src/components/Dialog";
 
 export const PlaceListComponent = () => {
-  const { placeData, columns, PageCreate } = usePlaceListHook();
+  const {
+    placeData,
+    columns,
+    PageCreate,
+    placeCategoryData,
+    setPlaceCategoryData,
+    openDialogPlaceCategory,
+    currentPlaceCategoryData,
+    handleUpdatePlaceCategory,
+    handleOpenDialogPlaceCategory,
+    handleCloseDialogPlaceCategory,
+  } = usePlaceListHook();
 
   return (
     <Container item xs={12}>
@@ -15,18 +27,39 @@ export const PlaceListComponent = () => {
         <FormTitleWithButton
           title={"Địa Điểm"}
           buttonComponent={
-            <ButtonCreate
-              color="success"
-              variant="contained"
-              onClick={PageCreate}
-            >
-              <Grid item container>
-                <AddIcon />
+            <Grid item container xs={"auto"} columnGap={"12px"}>
+              <ButtonCreate
+                variant="contained"
+                startIcon={
+                  <Label
+                    sx={{
+                      fontSize: "16px !important",
+                    }}
+                  />
+                }
+                onClick={handleOpenDialogPlaceCategory}
+              >
+                <Typography textTransform={"none"}>Phân loại</Typography>
+              </ButtonCreate>
+              <ButtonCreate
+                color="success"
+                variant="contained"
+                startIcon={<Add />}
+                onClick={PageCreate}
+              >
                 <Typography textTransform={"none"}>Thêm</Typography>
-              </Grid>
-            </ButtonCreate>
+              </ButtonCreate>
+            </Grid>
           }
         >
+          <DialogPlaceCategory
+            data={placeCategoryData}
+            setData={setPlaceCategoryData}
+            open={openDialogPlaceCategory}
+            onSubmit={handleUpdatePlaceCategory}
+            currentData={currentPlaceCategoryData}
+            onClose={handleCloseDialogPlaceCategory}
+          />
           <Grid item xs={12} mt={"40px"}>
             <MaterialReactTable
               columns={columns}
