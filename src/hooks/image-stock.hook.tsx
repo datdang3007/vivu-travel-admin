@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import { IPlaceImageStock } from "src/interfaces";
 import { FormTitleCheckBoxProps, ItemImageListProps } from "src/types";
+import { showAlertError, showAlertSuccess } from "src/utils/alert";
+import { GetIdParams, UploadFileToDiscordWebhook } from "src/utils/common";
 import {
   useCallAPICreate,
   useCallAPIDelete,
   useCallAPIFind,
 } from "./common.hook";
-import { GetIdParams, UploadFileToDiscordWebhook } from "src/utils/common";
-import { useLocation } from "react-router-dom";
-import { IPlaceImageStock } from "src/interfaces";
-import { showAlertError, showAlertSuccess } from "src/utils/alert";
 
 // const imageListValue = [
 //   {
@@ -44,8 +44,10 @@ export const usePlaceImageStockHook = () => {
   const placeID = GetIdParams(location.pathname);
   const { requestCreatePlaceImage } = useCallAPICreate();
   const { requestDeletePlaceImage } = useCallAPIDelete();
-  const { requestFindPlaceImageStockByPlaceID } = useCallAPIFind();
+  const { requestFindPlaceImageStockByPlaceID, requestFindPlaceByID } =
+    useCallAPIFind();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [placeName, setPlaceName] = useState<string>("");
   const [imageList, setImageList] = useState<ItemImageListProps[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const methods = useForm<FormTitleCheckBoxProps>({
@@ -53,6 +55,16 @@ export const usePlaceImageStockHook = () => {
       formTitleCheckBoxValue: false,
     },
   });
+
+  // Handle call API get place name:
+  const handleSetPlaceName = useCallback(
+    (id: string) => {
+      requestFindPlaceByID(id).then((place) => {
+        setPlaceName(place.name);
+      });
+    },
+    [requestFindPlaceByID]
+  );
 
   // Handle load image stock:
   const handleGetImageStock = useCallback(
@@ -195,8 +207,13 @@ export const usePlaceImageStockHook = () => {
     handleGetImageStock(placeID);
   }, [handleGetImageStock, placeID]);
 
+  useEffect(() => {
+    handleSetPlaceName(placeID);
+  }, [handleSetPlaceName, placeID]);
+
   return {
     imageList,
+    placeName,
     methods,
     isEditMode,
     imagePreview,

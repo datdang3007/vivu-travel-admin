@@ -6,8 +6,8 @@ export interface FormHelpTextProps {
 }
 
 export interface AutoCompleteOptions {
-  label: string;
   id: number | string;
+  label: string;
 }
 
 export interface FormTitleOptions {

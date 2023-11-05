@@ -39,7 +39,9 @@ export const PlaceListComponent = () => {
                 }
                 onClick={handleOpenDialogPlaceCategory}
               >
-                <Typography textTransform={"none"}>Phân loại</Typography>
+                <Typography textTransform={"none"}>
+                  Loại hình du lịch
+                </Typography>
               </ButtonCreate>
               <ButtonCreate
                 color="success"

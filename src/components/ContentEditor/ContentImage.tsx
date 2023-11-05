@@ -1,4 +1,9 @@
-import { InsertPhoto, Label, DeleteForever } from "@mui/icons-material";
+import {
+  DeleteForever,
+  ImageOutlined,
+  InsertPhoto,
+  Label,
+} from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Button,
@@ -9,12 +14,14 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BoxImage } from "src/UI";
 import { COLOR_PALLETTE } from "src/constants/color";
 import { CONTENT_TYPE } from "src/constants/content";
 import { ContentDataProps } from "src/types";
-import { UploadFileToDiscordWebhook } from "src/utils/common";
+import { CheckIsImageUrl, UploadFileToDiscordWebhook } from "src/utils/common";
+import { DialogSelectImage } from "../Dialog";
+import { showAlertError } from "src/utils/alert";
 
 type Props = {
   id: string | number;
@@ -26,7 +33,30 @@ export const ContentImage = (props: Props) => {
   const { id, data, handleChange } = props;
   const fieldData = data.find((val) => val.id === id)?.content;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputLinkRef = useRef<HTMLInputElement | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const open = Boolean(anchorEl);
+
+  // OPEN / CLOSE DIALOG LINK IMAGE:
+  const handleOpenDialog = useCallback(() => {
+    setOpenDialog(true);
+    setTimeout(() => {
+      if (fileInputLinkRef.current) {
+        fileInputLinkRef.current.focus();
+      }
+    }, 100);
+  }, []);
+  const handleCloseDialog = useCallback(() => {
+    setOpenDialog(false);
+  }, []);
+
+  // CLICK TO INPUT TYPE FILE:
+  const onClickOpenSelectFile = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, []);
 
   // OPEN / CLOSE MENU:
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -43,7 +73,6 @@ export const ContentImage = (props: Props) => {
       if (!file) return;
       UploadFileToDiscordWebhook(file).then((linkUrl: any) => {
         if (!linkUrl) return;
-        console.log(linkUrl);
         const currentData = [...data];
         const newData = currentData.map((val) => {
           if (val.id === id) {
@@ -52,6 +81,7 @@ export const ContentImage = (props: Props) => {
           return val;
         });
         handleChange(newData);
+        setOpenDialog(false);
       });
     },
     [data, handleChange, id]
@@ -83,6 +113,36 @@ export const ContentImage = (props: Props) => {
         return val;
       });
     handleChange(newData);
+  }, [data, handleChange, id]);
+
+  //   EVENT WHEN SUBMIT DIALOG INPUT LINK IMAGE:
+  const onClickSubmitLink = useCallback(async () => {
+    if (!fileInputLinkRef.current) return;
+    const imageUrl = fileInputLinkRef.current.value;
+    CheckIsImageUrl(imageUrl)
+      .then((isImage) => {
+        if (!isImage) {
+          return showAlertError(
+            "Lỗi !",
+            "Link ảnh không hợp lệ, vui lòng kiểm tra lại"
+          );
+        }
+        setOpenDialog(false);
+        const currentData = [...data];
+        const newData = currentData.map((val) => {
+          if (val.id === id) {
+            val.content = imageUrl;
+          }
+          return val;
+        });
+        handleChange(newData);
+      })
+      .catch((error) => {
+        showAlertError(
+          "Lỗi !",
+          `Lỗi xảy ra khi kiểm tra liên kết hình ảnh: ${error}`
+        );
+      });
   }, [data, handleChange, id]);
 
   //   DEFINE CONTENT OPTION:
@@ -139,7 +199,7 @@ export const ContentImage = (props: Props) => {
   return (
     <Container item xs={12}>
       <Grid item container xs={12} columnSpacing={"8px"}>
-        <Grid item xs>
+        <Grid item display="none">
           <TextField
             type="file"
             fullWidth
@@ -148,8 +208,33 @@ export const ContentImage = (props: Props) => {
             InputLabelProps={{
               shrink: true,
             }}
+            inputRef={fileInputRef}
             onChange={onChange}
           />
+        </Grid>
+        <Grid item xs>
+          {fieldData ? (
+            <ButtonPreviewImage fullWidth onClick={handleOpenDialog}>
+              <BoxImage src={fieldData} />
+            </ButtonPreviewImage>
+          ) : (
+            <ButtonSelectImage
+              fullWidth
+              variant="outlined"
+              onClick={handleOpenDialog}
+            >
+              <Grid
+                item
+                container
+                alignItems={"center"}
+                justifyContent={"center"}
+                columnGap={"8px"}
+              >
+                <Typography textTransform={"none"}>Chọn ảnh</Typography>
+                <ImageOutlined />
+              </Grid>
+            </ButtonSelectImage>
+          )}
         </Grid>
         <Grid item>
           <ButtonHandle onClick={handleOpenMenu}>
@@ -168,11 +253,13 @@ export const ContentImage = (props: Props) => {
           </Menu>
         </Grid>
       </Grid>
-      {fieldData && (
-        <Grid item xs={12} mt={"24px"}>
-          <BoxImage src={fieldData} />
-        </Grid>
-      )}
+      <DialogSelectImage
+        open={openDialog}
+        onClose={handleCloseDialog}
+        inputRef={fileInputLinkRef}
+        onSubmit={onClickSubmitLink}
+        openSelectFile={onClickOpenSelectFile}
+      />
     </Container>
   );
 };
@@ -183,6 +270,17 @@ const Container = styled(Grid)({
   "&:hover": {
     borderColor: COLOR_PALLETTE.PRIMARY,
   },
+});
+
+const ButtonSelectImage = styled(Button)({
+  borderStyle: "dashed",
+  aspectRatio: "9/5",
+});
+
+const ButtonPreviewImage = styled(Button)({
+  padding: "0",
+  borderRadius: "4px",
+  overflow: "hidden",
 });
 
 const ButtonHandle = styled(Button)({

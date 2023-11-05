@@ -206,7 +206,7 @@ export const DialogPlaceCategory = (props: Props) => {
                 },
               }}
             >
-              Phân Loại Địa Điểm
+              Loại Hình Du Lịch
             </Typography>
           </Grid>
           <Grid item container columnGap={"8px"} xs={"auto"}>

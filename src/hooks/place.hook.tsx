@@ -213,13 +213,16 @@ const initContentData = [
 
 // Hook for create page:
 export const usePlaceCreateHook = () => {
-  const { provinceList } = useCallApi();
+  const { provinceList, placeCategoryList } = useCallApi();
   const { PageList } = useNavigateCRUD(url);
   const { requestCreatePlace } = useCallAPICreate();
   const { SelectField: provinceOptionComponent } = useSelectHook(provinceList);
+  const { autocompleteOptions: placeCategoryOptions } =
+    useSelectHook(placeCategoryList);
 
   const formCreate = useForm({
     defaultValues: {
+      category: [],
       province: "",
       contents: [...initContentData],
     },
@@ -254,10 +257,11 @@ export const usePlaceCreateHook = () => {
   return {
     PageList,
     formCreate,
-    provinceOptionComponent,
     contentData,
-    handleUpdateContentData,
     onSubmit,
+    placeCategoryOptions,
+    handleUpdateContentData,
+    provinceOptionComponent,
   };
 };
 
@@ -265,20 +269,23 @@ export const usePlaceCreateHook = () => {
 export const usePlaceEditHook = () => {
   const location = useLocation();
   const placeID = GetIdParams(location.pathname);
-  const { provinceList } = useCallApi();
+  const { provinceList, placeCategoryList } = useCallApi();
   const { PageList } = useNavigateCRUD(url);
   const { requestFindPlaceByID } = useCallAPIFind();
   const { requestCreatePlace } = useCallAPICreate();
   const { SelectField: provinceOptionComponent } = useSelectHook(provinceList);
+  const { autocompleteOptions: placeCategoryOptions } =
+    useSelectHook(placeCategoryList);
   const [contentData, setContentData] = useState<ContentDataProps[]>([]);
 
-  const formCreate = useForm({
+  const formEdit = useForm({
     defaultValues: {
+      category: [],
       province: "",
       contents: [],
     },
   });
-  const { handleSubmit, reset } = formCreate;
+  const { handleSubmit, reset } = formEdit;
 
   // Function update content data:
   const handleUpdateContentData = useCallback((data: ContentDataProps[]) => {
@@ -312,10 +319,21 @@ export const usePlaceEditHook = () => {
           };
         }
       );
+      const convertDataCategory = data.category.map((val: any) => {
+        const result: {
+          id: string | number;
+          label: string;
+        } = {
+          id: val.id,
+          label: val.name,
+        };
+        return result;
+      }, []);
       const convertData = {
         ...data,
         contents: convertContents,
         province: data.province.id,
+        category: convertDataCategory,
       };
       setContentData(convertContents);
       reset(convertData);
@@ -323,11 +341,12 @@ export const usePlaceEditHook = () => {
   }, [placeID, requestFindPlaceByID, reset]);
 
   return {
+    formEdit,
     PageList,
-    formCreate,
-    provinceOptionComponent,
-    contentData,
-    handleUpdateContentData,
     onSubmit,
+    contentData,
+    placeCategoryOptions,
+    handleUpdateContentData,
+    provinceOptionComponent,
   };
 };

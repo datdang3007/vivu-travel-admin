@@ -11,6 +11,7 @@ import {
 import { FormProvider } from "react-hook-form";
 import { ContentEditor } from "src/components/ContentEditor";
 import {
+  FormAutoComplete,
   FormTextArea,
   FormTitle,
   FormUploadImage,
@@ -25,8 +26,9 @@ export const PlaceCreateComponent = () => {
     formCreate,
     contentData,
     onSubmit,
-    provinceOptionComponent,
+    placeCategoryOptions,
     handleUpdateContentData,
+    provinceOptionComponent,
   } = usePlaceCreateHook();
 
   return (
@@ -49,7 +51,7 @@ export const PlaceCreateComponent = () => {
               <Grid item xs={12}>
                 <Title>Ảnh đại diện</Title>
               </Grid>
-              
+
               <Grid item container xs={12}>
                 {/* IMAGE */}
                 <FormUploadImage
@@ -99,6 +101,23 @@ export const PlaceCreateComponent = () => {
                   >
                     {provinceOptionComponent()}
                   </InputTextField>
+                </Grid>
+              </Grid>
+
+              {/* CATEGORY */}
+              <Grid container justifyContent={"space-between"} rowGap={"24px"}>
+                <Grid item xs={12}>
+                  <FormAutoComplete
+                    name="category"
+                    fullWidth
+                    label="Loại hình du lịch"
+                    placeholder="Vui lòng chọn"
+                    InputLabelProps={{ shrink: true }}
+                    items={placeCategoryOptions}
+                    rules={{
+                      required: "Giá trị không được để trống",
+                    }}
+                  />
                 </Grid>
               </Grid>
 

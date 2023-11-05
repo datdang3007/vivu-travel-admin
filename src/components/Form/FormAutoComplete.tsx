@@ -1,5 +1,7 @@
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import {
   Autocomplete,
+  Checkbox,
   Grid,
   InputLabelProps,
   InputProps,
@@ -7,13 +9,13 @@ import {
   TextFieldProps,
   styled,
 } from "@mui/material";
-import { AutoCompleteOptions } from "src/types/Form";
+import { useCallback } from "react";
 import {
   FieldValues,
-  useController,
   UseControllerProps,
+  useController,
 } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
+import { AutoCompleteOptions } from "src/types/Form";
 import { FormHelpText } from "./FormHelpText";
 
 type Props = InputLabelProps &
@@ -22,12 +24,14 @@ type Props = InputLabelProps &
     items: AutoCompleteOptions[];
   };
 
+const icon = <CheckBoxOutlineBlank fontSize="small" />;
+const checkedIcon = <CheckBox fontSize="small" />;
+
 export const FormAutoComplete = (
   props: Props & UseControllerProps<FieldValues>
 ) => {
-  const { name, sx, control, placeholder, items, rules } = props;
+  const { name, control, items, rules, ...rest } = props;
   const { field, fieldState } = useController({ name, control, rules });
-  const [value, setValue] = useState<AutoCompleteOptions | null>(null);
   const fieldStateError = fieldState.error;
   const error = Boolean(fieldStateError);
 
@@ -35,67 +39,49 @@ export const FormAutoComplete = (
     (params: any) => {
       return (
         <>
-          <TextField
-            placeholder={placeholder}
-            error={error}
-            sx={sx}
-            {...params}
-            {...field}
-          />
+          <TextField {...params} error={error} {...rest} />
           {error && <FormHelpText fieldState={fieldState} />}
         </>
       );
     },
-    [error, field, fieldState, placeholder, sx]
+    [error, fieldState, rest]
   );
 
   const handleChange = useCallback(
-    (_event: React.SyntheticEvent, newValue: AutoCompleteOptions | null) => {
+    (_event: React.SyntheticEvent, newValue: AutoCompleteOptions[] | null) => {
       if (newValue) {
-        field.onChange(newValue.id);
-        setValue(newValue);
+        field.onChange(newValue);
       }
     },
     [field]
   );
 
-  const handleOnInputChange = useCallback(
-    (_event: React.SyntheticEvent, newValue: string) => {
-      const valueTmp = items.find(
-        (item: AutoCompleteOptions) => item.label === newValue
-      );
-      if (valueTmp) {
-        field.onChange(valueTmp.id);
-        setValue(valueTmp);
-      }
-    },
-    [field, items]
-  );
-
-  useEffect(() => {
-    if (field.value && value == null) {
-      const valueTmp = items.find(
-        (item: AutoCompleteOptions) =>
-          item.id.toString() === field.value.toString()
-      );
-      if (valueTmp) {
-        field.onChange(valueTmp.id);
-        setValue(valueTmp);
-      }
-    }
-  }, [field, items, value]);
-
   return (
     <GridAutoComplete item xs={12}>
       <Autocomplete
-        value={value}
-        className="auto-complete-pd"
+        {...field}
         fullWidth
+        multiple
         disablePortal
+        disableCloseOnSelect
         options={items}
-        renderInput={renderInputCallback}
         onChange={handleChange}
-        onInputChange={handleOnInputChange}
+        renderInput={renderInputCallback}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) =>
+          option?.id?.toString() === (value?.id ?? value)?.toString()
+        }
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Checkbox
+              icon={icon}
+              checkedIcon={checkedIcon}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option.label}
+          </li>
+        )}
       />
     </GridAutoComplete>
   );

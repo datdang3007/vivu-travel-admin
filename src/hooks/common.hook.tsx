@@ -87,7 +87,7 @@ export const useCallApi = () => {
     getPlaceList
   );
 
-  // Place
+  // Place Category
   const { data: placeCategoryList = [], refetch: refetchPlaceCategoryList } =
     useQuery(["getPlaceCategoryList"], getPlaceCategoryList);
 
@@ -320,6 +320,11 @@ export const useSelectHook = (data: any[], value?: string, label?: string) => {
     label: val[optionLabel],
   }));
 
+  const autocompleteOptions = data.map((val) => ({
+    id: val[optionValue],
+    label: val[optionLabel],
+  }));
+
   // Function render select field:
   const SelectField = useCallback(() => {
     const convertOptions = [...options];
@@ -330,5 +335,5 @@ export const useSelectHook = (data: any[], value?: string, label?: string) => {
     ));
   }, [options]);
 
-  return { options, SelectField };
+  return { options, autocompleteOptions, SelectField };
 };

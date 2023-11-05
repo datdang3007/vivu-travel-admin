@@ -11,6 +11,7 @@ import {
 import { FormProvider } from "react-hook-form";
 import { ContentEditor } from "src/components/ContentEditor";
 import {
+  FormAutoComplete,
   FormTextArea,
   FormTitle,
   FormUploadImage,
@@ -21,12 +22,13 @@ import { usePlaceEditHook } from "src/hooks/place.hook";
 
 export const PlaceEditComponent = () => {
   const {
+    formEdit,
     PageList,
-    formCreate,
-    contentData,
     onSubmit,
-    provinceOptionComponent,
+    contentData,
+    placeCategoryOptions,
     handleUpdateContentData,
+    provinceOptionComponent,
   } = usePlaceEditHook();
 
   return (
@@ -35,8 +37,8 @@ export const PlaceEditComponent = () => {
         <Button startIcon={<KeyboardBackspace />} onClick={PageList}>
           <Typography textTransform={"none"}>Trở lại</Typography>
         </Button>
-        <FormTitle title="Tạo Địa Điểm Mới">
-          <FormProvider {...formCreate}>
+        <FormTitle title="Sửa Địa Điểm">
+          <FormProvider {...formEdit}>
             <Grid
               item
               container
@@ -102,6 +104,23 @@ export const PlaceEditComponent = () => {
                 </Grid>
               </Grid>
 
+              {/* CATEGORY */}
+              <Grid container justifyContent={"space-between"} rowGap={"24px"}>
+                <Grid item xs={12}>
+                  <FormAutoComplete
+                    name="category"
+                    fullWidth
+                    label="Loại hình du lịch"
+                    placeholder="Vui lòng chọn"
+                    InputLabelProps={{ shrink: true }}
+                    items={placeCategoryOptions}
+                    rules={{
+                      required: "Giá trị không được để trống",
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
               {/* OVERVIEW */}
               <Grid item xs={12}>
                 <FormTextArea
@@ -156,7 +175,7 @@ export const PlaceEditComponent = () => {
                       width: "140px",
                     }}
                   >
-                    <Typography textTransform={"none"}>Tạo</Typography>
+                    <Typography textTransform={"none"}>Sửa</Typography>
                   </Button>
                 </Grid>
               </Grid>

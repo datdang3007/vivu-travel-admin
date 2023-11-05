@@ -1,13 +1,7 @@
-import { AttachFile, ImageOutlined } from "@mui/icons-material";
+import { ImageOutlined } from "@mui/icons-material";
 import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Grid,
-  IconButton,
-  InputAdornment,
   InputLabelProps,
   TextField,
   TextFieldProps,
@@ -21,9 +15,10 @@ import {
   useController,
 } from "react-hook-form";
 import { BoxImage } from "src/UI";
-import { CheckIsImageUrl, UploadFileToDiscordWebhook } from "src/utils/common";
-import { FormHelpText } from "./FormHelpText";
 import { showAlertError } from "src/utils/alert";
+import { CheckIsImageUrl, UploadFileToDiscordWebhook } from "src/utils/common";
+import { DialogSelectImage } from "../Dialog";
+import { FormHelpText } from "./FormHelpText";
 
 export const FormUploadImage = (
   props: InputLabelProps & TextFieldProps & UseControllerProps<FieldValues>
@@ -137,54 +132,13 @@ export const FormUploadImage = (
           </>
         )}
       </Grid>
-      <Dialog
+      <DialogSelectImage
         open={openDialog}
         onClose={handleCloseDialog}
-        maxWidth={"sm"}
-        fullWidth
-      >
-        <DialogTitle>
-          <Typography
-            sx={{
-              fontSize: {
-                xs: 20,
-                sm: 22,
-                md: 24,
-              },
-              fontWeight: "bold",
-            }}
-          >
-            Chọn Ảnh
-          </Typography>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Hình ảnh"
-            placeholder="Link URL"
-            inputRef={fileInputLinkRef}
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={onClickOpenSelectFile} edge="end">
-                    <AttachFile />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>
-            <Typography textTransform={"none"}>Đóng</Typography>
-          </Button>
-          <Button variant="contained" onClick={onClickSubmitLink}>
-            <Typography textTransform={"none"}>Chọn</Typography>
-          </Button>
-        </DialogActions>
-      </Dialog>
+        inputRef={fileInputLinkRef}
+        onSubmit={onClickSubmitLink}
+        openSelectFile={onClickOpenSelectFile}
+      />
     </Grid>
   );
 };

@@ -13,6 +13,7 @@ export const PlaceImageStockComponent = () => {
   const {
     imageList,
     methods,
+    placeName,
     isEditMode,
     imagePreview,
     onCloseDialogPreview,
@@ -56,7 +57,7 @@ export const PlaceImageStockComponent = () => {
         <Header item container alignItems={"center"} xs={12}>
           <Grid item xs>
             <FormTitleWithCheckBox
-              title={"Fansipan"}
+              title={`Kho ảnh địa điểm ${placeName}`}
               checkBoxLabel={"Sửa"}
               value={isEditMode}
               onChange={handleToggleEditMode}
