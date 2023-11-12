@@ -1,4 +1,5 @@
 import http from "src/config/http";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { IPlaceCategory } from "src/interfaces";
 
 const url = "place-category";
@@ -9,7 +10,21 @@ export const getPlaceCategoryList = async () => {
 };
 
 export const updatePlaceCategory = async (data: IPlaceCategory[]) => {
-  const res = await http.post(`${url}/bulkUpdate`, { data: data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.post(
+    `${url}/bulkUpdate`,
+    {
+      data: data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 

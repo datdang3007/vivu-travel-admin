@@ -1,4 +1,5 @@
 import http from "src/config/http";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { IPlace } from "src/interfaces";
 
 export interface UpdatePlaceProps {
@@ -13,12 +14,40 @@ export const getPlaceList = async (): Promise<IPlace[]> => {
 };
 
 export const createPlace = async (data: IPlace) => {
-  const res = await http.post(url, { ...data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.post(
+    url,
+    {
+      ...data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
 export const updatePlace = async ({ id, data }: UpdatePlaceProps) => {
-  const res = await http.patch(`${url}/${id}`, { ...data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.patch(
+    `${url}/${id}`,
+    {
+      ...data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
@@ -28,6 +57,14 @@ export const findPlaceByID = async (id: string) => {
 };
 
 export const deletePlace = async (id: string) => {
-  const res = await http.delete(`${url}/${id}`);
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.delete(`${url}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res;
 };

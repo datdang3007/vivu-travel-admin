@@ -1,10 +1,25 @@
 import http from "src/config/http";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { IPlaceImageStock } from "src/interfaces";
 
 const url = "place-image";
 
 export const createPlaceImage = async (data: IPlaceImageStock[]) => {
-  const res = await http.post(`${url}/createList`, { data: data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.post(
+    `${url}/createList`,
+    {
+      data: data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
@@ -14,6 +29,15 @@ export const findPlaceImageByPlaceID = async (id: string | number) => {
 };
 
 export const deletePlaceImage = async (list: number[]) => {
-  const res = await http.delete(`${url}/delete/list`, { data: list });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.delete(`${url}/delete/list`, {
+    data: list,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res;
 };

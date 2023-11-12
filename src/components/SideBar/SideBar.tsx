@@ -11,9 +11,13 @@ import PublicIcon from "@mui/icons-material/Public";
 import MapIcon from "@mui/icons-material/Map";
 import PlaceIcon from "@mui/icons-material/Place";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
+import { useCallAPIAuth } from "src/hooks/common.hook";
 
 export const SideBar = () => {
   const navigate = useNavigate();
+  const { requestGetUserProfile } = useCallAPIAuth();
+
   const changeDirection = useCallback(
     (path: string) => {
       navigate(path);
@@ -22,8 +26,11 @@ export const SideBar = () => {
   );
 
   const onClickLogOut = useCallback(() => {
+    localStorage.removeItem(LOCAL_STORAGE.AccessToken);
+    localStorage.removeItem(LOCAL_STORAGE.UserRole);
+    requestGetUserProfile();
     navigate(PATH.LOGIN);
-  }, [navigate]);
+  }, [navigate, requestGetUserProfile]);
 
   const ListActionComponent = [
     {

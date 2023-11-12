@@ -1,4 +1,5 @@
 import http from "src/config/http";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { IProvince } from "src/interfaces";
 
 export interface UpdateProvinceProps {
@@ -13,12 +14,40 @@ export const getProvinceList = async (): Promise<IProvince[]> => {
 };
 
 export const createProvince = async (data: IProvince) => {
-  const res = await http.post(url, { ...data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.post(
+    url,
+    {
+      ...data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
 export const updateProvince = async ({ id, data }: UpdateProvinceProps) => {
-  const res = await http.patch(`${url}/${id}`, { ...data });
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.patch(
+    `${url}/${id}`,
+    {
+      ...data,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
@@ -28,6 +57,14 @@ export const findProvinceByID = async (id: string) => {
 };
 
 export const deleteProvince = async (id: string) => {
-  const res = await http.delete(`${url}/${id}`);
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.delete(`${url}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res;
 };

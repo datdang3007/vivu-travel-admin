@@ -4,8 +4,13 @@ import { LoadingModule } from "../components/Loading";
 import { Login } from "../pages";
 import protectedRoute from "./MainRoute";
 import { PATH } from "./path";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
 
 const ProtectRouter = () => {
+  const role = localStorage.getItem(LOCAL_STORAGE.UserRole);
+  if (!role) {
+    return <Navigate to={PATH.LOGIN} />;
+  }
   return <Outlet />;
 };
 

@@ -1,3 +1,4 @@
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -10,13 +11,13 @@ import {
   styled,
 } from "@mui/material";
 import { useTheme } from "@mui/system";
-import { useCallback, useMemo, useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { rules } from "src/utils/validation";
 import { InputTextField } from "src/components/Form";
 import { LOGO_BRAND } from "src/constants/img_common";
+import { useCallAPIAuth } from "src/hooks/common.hook";
+import { IAuth } from "src/interfaces";
+import { rules } from "src/utils/validation";
 
 export interface LoginProps {
   user_email: string;
@@ -24,23 +25,11 @@ export interface LoginProps {
 }
 
 export const Login = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const { validateEmail, validatePassword } = rules;
   const [showPassword, setShowPassword] = useState(false);
 
-  const defaultValuesLogin = useMemo(() => {
-    let result = {
-      user_email: "",
-      user_password: "",
-    };
-    const keyVal = localStorage.getItem("RegisterInfo");
-    if (keyVal) {
-      result = JSON.parse(keyVal) as LoginProps;
-    }
-    console.log(result);
-    return result;
-  }, []);
+  const { requestLogin } = useCallAPIAuth();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -51,16 +40,17 @@ export const Login = () => {
   };
 
   const handleSubmit = useCallback(
-    (values: any) => {
-      const { user_email, user_password } = values;
-      console.log("login", user_email, user_password);
-      navigate("#");
+    (data: any) => {
+      requestLogin(data);
     },
-    [navigate]
+    [requestLogin]
   );
 
-  const methods = useForm<LoginProps>({
-    defaultValues: defaultValuesLogin,
+  const methods = useForm<IAuth>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   return (
@@ -98,7 +88,7 @@ export const Login = () => {
               </Grid>
               <Grid item xs={12} textAlign={"center"} marginTop={"48px"}>
                 <InputTextField
-                  name={"user_email"}
+                  name={"email"}
                   label="Email"
                   type="email"
                   variant="standard"
@@ -119,7 +109,7 @@ export const Login = () => {
               </Grid>
               <Grid item xs={12} textAlign={"center"} marginTop={"38px"}>
                 <InputTextField
-                  name={"user_password"}
+                  name={"password"}
                   label="Mật khẩu"
                   variant="standard"
                   fullWidth

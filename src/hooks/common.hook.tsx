@@ -2,6 +2,7 @@ import { MenuItem } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { authLogin, checkExistEmail, getUserProfile } from "src/apis/auth.api";
 import {
   getPlaceCategoryList,
   updatePlaceCategory,
@@ -38,6 +39,66 @@ import {
   getTerritoryList,
   updateTerritory,
 } from "src/apis/territory.api";
+import { LOCAL_STORAGE } from "src/constants/local_storage";
+import { useMasterContext } from "src/context/MasterContext";
+import { PATH } from "src/routes/path";
+import { showAlertError } from "src/utils/alert";
+
+// Hook call API auth:
+export const useCallAPIAuth = () => {
+  const navigate = useNavigate();
+  const { setUser } = useMasterContext();
+
+  const {
+    mutateAsync: requestCheckExistEmail,
+    isLoading: loadingForCheckExistEmail,
+  } = useMutation({
+    mutationFn: checkExistEmail,
+  });
+
+  const {
+    mutateAsync: requestGetUserProfile,
+    isLoading: loadingForGetUserProfile,
+  } = useMutation({
+    mutationFn: getUserProfile,
+    onSuccess: (data) => {
+      setUser(data);
+    },
+    onError: (error) => {
+      console.error(error);
+      setUser(null);
+    },
+  });
+
+  const { mutateAsync: requestLogin, isLoading: loadingForLogin } = useMutation(
+    {
+      mutationFn: authLogin,
+      onSuccess: (res) => {
+        const { access_token } = res;
+        localStorage.setItem(LOCAL_STORAGE.AccessToken, access_token);
+        requestGetUserProfile().then((data) => {
+          if (data) {
+            localStorage.setItem(LOCAL_STORAGE.UserRole, "1");
+            navigate(PATH.STATISTICS);
+          }
+        });
+      },
+      onError: (error) => {
+        console.error(error);
+        showAlertError("Lỗi !", "Email hoặc mật khẩu không đúng");
+      },
+    }
+  );
+
+  return {
+    requestLogin,
+    loadingForLogin,
+    requestCheckExistEmail,
+    loadingForCheckExistEmail,
+    requestGetUserProfile,
+    loadingForGetUserProfile,
+  };
+};
 
 // Hook navigate to CRUD page entity:
 export const useNavigateCRUD = (url: string) => {
