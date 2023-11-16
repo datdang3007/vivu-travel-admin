@@ -10,17 +10,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useMemo } from "react";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
   inputRef: React.Ref<any>;
-  openSelectFile: () => void;
+  openSelectFile?: () => void;
 };
 
 export const DialogSelectImage = (props: Props) => {
   const { open, onClose, onSubmit, inputRef, openSelectFile } = props;
+
+  const canSelectFile = useMemo(
+    () => Boolean(openSelectFile),
+    [openSelectFile]
+  );
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth={"sm"} fullWidth>
@@ -47,13 +53,13 @@ export const DialogSelectImage = (props: Props) => {
           inputRef={inputRef}
           InputLabelProps={{ shrink: true }}
           InputProps={{
-            endAdornment: (
+            endAdornment: canSelectFile ? (
               <InputAdornment position="end">
                 <IconButton onClick={openSelectFile} edge="end">
                   <AttachFile />
                 </IconButton>
               </InputAdornment>
-            ),
+            ) : undefined,
           }}
         />
       </DialogContent>

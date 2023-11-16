@@ -1,43 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { IPlaceImageStock } from "src/interfaces";
 import { FormTitleCheckBoxProps, ItemImageListProps } from "src/types";
 import { showAlertError, showAlertSuccess } from "src/utils/alert";
-import { GetIdParams, UploadFileToDiscordWebhook } from "src/utils/common";
+import {
+  CheckIsImageUrl,
+  GetIdParams,
+  UploadFileToDiscordWebhook,
+} from "src/utils/common";
 import {
   useCallAPICreate,
   useCallAPIDelete,
   useCallAPIFind,
 } from "./common.hook";
-
-// const imageListValue = [
-//   {
-//     id: 1,
-//     active: false,
-//     url: "https://cdn.discordapp.com/attachments/1089123119668658206/1112293025171898478/01-Fansipan-3-1024x576.jpg",
-//   },
-//   {
-//     id: 2,
-//     active: false,
-//     url: "https://cdn.discordapp.com/attachments/1089123119668658206/1112293025171898478/01-Fansipan-3-1024x576.jpg",
-//   },
-//   {
-//     id: 3,
-//     active: false,
-//     url: "https://cdn.discordapp.com/attachments/1089123119668658206/1112293025171898478/01-Fansipan-3-1024x576.jpg",
-//   },
-//   {
-//     id: 4,
-//     active: false,
-//     url: "https://cdn.discordapp.com/attachments/1089123119668658206/1112293025171898478/01-Fansipan-3-1024x576.jpg",
-//   },
-//   {
-//     id: 5,
-//     active: false,
-//     url: "https://cdn.discordapp.com/attachments/1089123119668658206/1112293025171898478/01-Fansipan-3-1024x576.jpg",
-//   },
-// ] as ItemImageListProps[];
 
 export const usePlaceImageStockHook = () => {
   const location = useLocation();
@@ -47,6 +23,9 @@ export const usePlaceImageStockHook = () => {
   const { requestFindPlaceImageStockByPlaceID, requestFindPlaceByID } =
     useCallAPIFind();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [openDialogSelectImage, setOpenDialogSelectImage] =
+    useState<boolean>(false);
+  const fileInputLinkRef = useRef<HTMLInputElement | null>(null);
   const [placeName, setPlaceName] = useState<string>("");
   const [imageList, setImageList] = useState<ItemImageListProps[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -55,6 +34,14 @@ export const usePlaceImageStockHook = () => {
       formTitleCheckBoxValue: false,
     },
   });
+
+  // Toggle dialog select image:
+  const handleOpenDialogSelectImage = useCallback(() => {
+    setOpenDialogSelectImage(true);
+  }, []);
+  const handleCloseDialogSelectImage = useCallback(() => {
+    setOpenDialogSelectImage(false);
+  }, []);
 
   // Handle call API get place name:
   const handleSetPlaceName = useCallback(
@@ -172,6 +159,37 @@ export const usePlaceImageStockHook = () => {
     setImageList(newData);
   }, [imageList]);
 
+  const onClickSubmitLink = useCallback(async () => {
+    if (!fileInputLinkRef.current) return;
+    const imageUrl = fileInputLinkRef.current.value;
+    CheckIsImageUrl(imageUrl)
+      .then((isImage) => {
+        if (!isImage) {
+          return showAlertError(
+            "Lỗi !",
+            "Link ảnh không hợp lệ, vui lòng kiểm tra lại"
+          );
+        }
+        setOpenDialogSelectImage(false);
+        const dataCreate = [
+          {
+            link: imageUrl,
+            place: { id: Number(placeID) },
+          },
+        ];
+        requestCreatePlaceImage(dataCreate as IPlaceImageStock[]).then(() => {
+          showAlertSuccess("Thêm thành công", "Đã thêm hình ảnh thành công!");
+          handleGetImageStock(placeID);
+        });
+      })
+      .catch((error) => {
+        showAlertError(
+          "Lỗi !",
+          `Lỗi xảy ra khi kiểm tra liên kết hình ảnh: ${error}`
+        );
+      });
+  }, [handleGetImageStock, placeID, requestCreatePlaceImage]);
+
   const handleToggleEditMode = useCallback(() => {
     setIsEditMode((pre) => {
       if (pre) {
@@ -217,6 +235,11 @@ export const usePlaceImageStockHook = () => {
     methods,
     isEditMode,
     imagePreview,
+    openDialogSelectImage,
+    fileInputLinkRef,
+    handleOpenDialogSelectImage,
+    handleCloseDialogSelectImage,
+    onClickSubmitLink,
     handleCreateImage,
     handleToggleEditMode,
     handleDeleteImage,

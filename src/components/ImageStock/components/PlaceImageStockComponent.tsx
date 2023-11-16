@@ -1,10 +1,9 @@
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import DeleteForeverSharpIcon from "@mui/icons-material/DeleteForeverSharp";
+import { DeleteForeverSharp, CheckBox, Add } from "@mui/icons-material";
 import { Box, Button, Grid, Typography, styled } from "@mui/material";
 import { useCallback } from "react";
 import { FormProvider } from "react-hook-form";
 import { BoxImage } from "src/UI";
-import { DialogPreviewImage } from "src/components/Dialog";
+import { DialogPreviewImage, DialogSelectImage } from "src/components/Dialog";
 import { FormInputImage, FormTitleWithCheckBox } from "src/components/Form";
 import { COLOR_PALLETTE } from "src/constants/color";
 import { usePlaceImageStockHook } from "src/hooks/image-stock.hook";
@@ -12,14 +11,19 @@ import { usePlaceImageStockHook } from "src/hooks/image-stock.hook";
 export const PlaceImageStockComponent = () => {
   const {
     imageList,
-    methods,
     placeName,
+    methods,
     isEditMode,
     imagePreview,
-    onCloseDialogPreview,
+    fileInputLinkRef,
+    openDialogSelectImage,
+    handleOpenDialogSelectImage,
+    handleCloseDialogSelectImage,
+    onClickSubmitLink,
     handleCreateImage,
     handleToggleEditMode,
     handleDeleteImage,
+    onCloseDialogPreview,
     onImageClick,
   } = usePlaceImageStockHook();
 
@@ -42,7 +46,7 @@ export const PlaceImageStockComponent = () => {
             className={isActive ? "active" : undefined}
           >
             <BoxChecked display={isActive ? undefined : "none"}>
-              <CheckBoxIcon sx={{ color: COLOR_PALLETTE.PRIMARY }} />
+              <CheckBox sx={{ color: COLOR_PALLETTE.PRIMARY }} />
             </BoxChecked>
             <BoxImage src={val.link} />
           </CardItemImage>
@@ -63,14 +67,27 @@ export const PlaceImageStockComponent = () => {
               onChange={handleToggleEditMode}
             />
           </Grid>
+
+          {/* Button Delete */}
           <Grid item xs="auto">
             <Button
               color="error"
               disabled={!isEditMode}
               onClick={handleDeleteImage}
-              endIcon={<DeleteForeverSharpIcon />}
+              endIcon={<DeleteForeverSharp />}
             >
               <Typography textTransform={"none"}>Xóa</Typography>
+            </Button>
+          </Grid>
+
+          {/* Button Add Image */}
+          <Grid item xs="auto">
+            <Button
+              color="success"
+              onClick={handleOpenDialogSelectImage}
+              endIcon={<Add />}
+            >
+              <Typography textTransform={"none"}>Thêm ảnh</Typography>
             </Button>
           </Grid>
         </Header>
@@ -83,10 +100,19 @@ export const PlaceImageStockComponent = () => {
           </CardItem>
           {imageListComponent()}
         </CardContainer>
+
+        {/* Dialog List */}
         <DialogPreviewImage
           url={imagePreview}
           open={!!imagePreview}
           onClose={onCloseDialogPreview}
+        />
+
+        <DialogSelectImage
+          open={openDialogSelectImage}
+          onClose={handleCloseDialogSelectImage}
+          inputRef={fileInputLinkRef}
+          onSubmit={onClickSubmitLink}
         />
       </Container>
     </FormProvider>
