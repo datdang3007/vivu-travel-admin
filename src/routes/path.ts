@@ -9,4 +9,5 @@ export const PATH = {
   PROVINCE: "/province",
   PLACE: "/place",
   IMAGE_STOCK: "/image-stock",
+  POST_MANAGER: "/post-manager",
 };

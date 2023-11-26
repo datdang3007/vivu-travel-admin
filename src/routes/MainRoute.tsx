@@ -20,6 +20,7 @@ import {
   UserManager,
 } from "src/pages";
 import { PATH } from "./path";
+import { PostManager } from "src/pages/PostManager";
 
 const protectedRoute: RouteObject = {
   element: <MainLayout />,
@@ -42,6 +43,10 @@ const protectedRoute: RouteObject = {
         {
           path: `${PATH.IMAGE_STOCK}/place/:id`,
           element: <PlaceImageStock />,
+        },
+        {
+          path: PATH.POST_MANAGER,
+          element: <PostManager />,
         },
 
         // REGION:

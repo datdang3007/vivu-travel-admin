@@ -4,6 +4,7 @@ export interface ActionProps {
   id?: string;
   icon: ReactNode;
   title: string;
+  role?: number[];
   onClick: () => void;
 }
 

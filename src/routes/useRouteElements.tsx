@@ -5,10 +5,21 @@ import { Login } from "../pages";
 import protectedRoute from "./MainRoute";
 import { PATH } from "./path";
 import { LOCAL_STORAGE } from "src/constants/local_storage";
+import { Role } from "src/constants/role";
+import { showAlertError } from "src/utils/alert";
+
+const RoleProtects = [Role.SuperAdmin, Role.Admin];
 
 const ProtectRouter = () => {
   const role = localStorage.getItem(LOCAL_STORAGE.UserRole);
-  if (!role) {
+  const isRoleValid = RoleProtects.includes(Number(role));
+  if (role && !isRoleValid) {
+    showAlertError(
+      "Đăng nhập thất bại!",
+      "Tài khoản không được cấp quyền truy cập"
+    );
+  }
+  if (!isRoleValid) {
     return <Navigate to={PATH.LOGIN} />;
   }
   return <Outlet />;

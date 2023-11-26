@@ -18,6 +18,7 @@ import {
   findPlaceByID,
   getPlaceList,
 } from "src/apis/place.api";
+import { getPostList, updatePost } from "src/apis/post.api.";
 import {
   createProvince,
   deleteProvince,
@@ -63,6 +64,10 @@ export const useCallAPIAuth = () => {
     mutationFn: getUserProfile,
     onSuccess: (data) => {
       setUser(data);
+      if (data) {
+        const { role } = data;
+        localStorage.setItem(LOCAL_STORAGE.UserRole, role.toString());
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -78,7 +83,6 @@ export const useCallAPIAuth = () => {
         localStorage.setItem(LOCAL_STORAGE.AccessToken, access_token);
         requestGetUserProfile().then((data) => {
           if (data) {
-            localStorage.setItem(LOCAL_STORAGE.UserRole, "1");
             navigate(PATH.STATISTICS);
           }
         });
@@ -152,6 +156,12 @@ export const useCallApi = () => {
   const { data: placeCategoryList = [], refetch: refetchPlaceCategoryList } =
     useQuery(["getPlaceCategoryList"], getPlaceCategoryList);
 
+  // Place
+  const { data: postList = [], refetch: refetchPostList } = useQuery(
+    ["getPostList"],
+    getPostList
+  );
+
   return {
     regionList,
     refetchRegionList,
@@ -163,6 +173,8 @@ export const useCallApi = () => {
     refetchPlaceList,
     placeCategoryList,
     refetchPlaceCategoryList,
+    postList,
+    refetchPostList,
   };
 };
 
@@ -302,6 +314,12 @@ export const useCallAPIUpdate = () => {
     mutationFn: updatePlaceCategory,
   });
 
+  // Post
+  const { mutateAsync: requestUpdatePost, isLoading: loadingUpdatePost } =
+    useMutation({
+      mutationFn: updatePost,
+    });
+
   return {
     requestUpdateProvince,
     loadingUpdateProvince,
@@ -311,6 +329,8 @@ export const useCallAPIUpdate = () => {
     loadingUpdateTerritory,
     requestUpdatePlaceCategory,
     loadingUpdatePlaceCategory,
+    requestUpdatePost,
+    loadingUpdatePost,
   };
 };
 

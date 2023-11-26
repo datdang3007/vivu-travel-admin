@@ -9,6 +9,7 @@ export interface IAuthUser {
   email: string;
   username: string;
   like: number;
+  role: number;
   description?: string;
   avatar?: string;
   iat: number;

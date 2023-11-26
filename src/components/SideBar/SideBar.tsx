@@ -1,21 +1,27 @@
+import {
+  AdminPanelSettings,
+  Apartment,
+  BarChart,
+  Map,
+  People,
+  Place,
+  Public,
+  TaskOutlined,
+} from "@mui/icons-material";
 import { Grid } from "@mui/material";
-import { ListAction } from "./ListAction";
-import { ListActionItemProps } from "src/types";
-import { useCallback } from "react";
-import { PATH } from "src/routes/path";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PeopleIcon from "@mui/icons-material/People";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PublicIcon from "@mui/icons-material/Public";
-import MapIcon from "@mui/icons-material/Map";
-import PlaceIcon from "@mui/icons-material/Place";
-import ApartmentIcon from "@mui/icons-material/Apartment";
 import { LOCAL_STORAGE } from "src/constants/local_storage";
+import { Role } from "src/constants/role";
+import { useMasterContext } from "src/context/MasterContext";
 import { useCallAPIAuth } from "src/hooks/common.hook";
+import { PATH } from "src/routes/path";
+import { ListActionItemProps } from "src/types";
+import { ListAction } from "./ListAction";
 
 export const SideBar = () => {
   const navigate = useNavigate();
+  const { user } = useMasterContext();
   const { requestGetUserProfile } = useCallAPIAuth();
 
   const changeDirection = useCallback(
@@ -32,65 +38,99 @@ export const SideBar = () => {
     navigate(PATH.LOGIN);
   }, [navigate, requestGetUserProfile]);
 
-  const ListActionComponent = [
-    {
-      title: "Thống Kê",
-      actionList: [
-        {
-          id: PATH.STATISTICS,
-          title: "Thống kê",
-          icon: <BarChartIcon />,
-          onClick: () => changeDirection(PATH.STATISTICS),
-        },
-      ],
-    },
-    {
-      title: "Tài Khoản",
-      actionList: [
-        {
-          id: PATH.USER_MANAGER,
-          title: "Người dùng",
-          icon: <PeopleIcon />,
-          onClick: () => changeDirection(PATH.USER_MANAGER),
-        },
-        {
-          id: PATH.STAFF_MANAGER,
-          title: "Quản trị viên",
-          icon: <AdminPanelSettingsIcon />,
-          onClick: () => changeDirection(PATH.STAFF_MANAGER),
-        },
-      ],
-    },
-    {
-      title: "Quản Lý Dữ Liệu",
-      actionList: [
-        {
-          id: PATH.REGION,
-          title: "Miền",
-          icon: <PublicIcon />,
-          onClick: () => changeDirection(PATH.REGION),
-        },
-        {
-          id: PATH.TERRITORY,
-          title: "Vùng",
-          icon: <MapIcon />,
-          onClick: () => changeDirection(PATH.TERRITORY),
-        },
-        {
-          id: PATH.PROVINCE,
-          title: "Tỉnh Thành",
-          icon: <PlaceIcon />,
-          onClick: () => changeDirection(PATH.PROVINCE),
-        },
-        {
-          id: PATH.PLACE,
-          title: "Địa Điểm",
-          icon: <ApartmentIcon />,
-          onClick: () => changeDirection(PATH.PLACE),
-        },
-      ],
-    },
-  ] as ListActionItemProps[];
+  const ListActionComponent = useMemo(() => {
+    if (!user) return [];
+    const actions = [
+      {
+        title: "Thống Kê",
+        actionList: [
+          {
+            id: PATH.STATISTICS,
+            title: "Thống kê",
+            icon: <BarChart />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.STATISTICS),
+          },
+        ],
+      },
+      {
+        title: "Tài Khoản",
+        actionList: [
+          {
+            id: PATH.USER_MANAGER,
+            title: "Người dùng",
+            icon: <People />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.USER_MANAGER),
+          },
+          {
+            id: PATH.STAFF_MANAGER,
+            title: "Quản trị viên",
+            icon: <AdminPanelSettings />,
+            role: [Role.SuperAdmin],
+            onClick: () => changeDirection(PATH.STAFF_MANAGER),
+          },
+        ],
+      },
+      {
+        title: "Bài Viết",
+        actionList: [
+          {
+            id: PATH.POST_MANAGER,
+            title: "Duyệt bài",
+            icon: <TaskOutlined />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.POST_MANAGER),
+          },
+        ],
+      },
+      {
+        title: "Quản Lý Dữ Liệu",
+        actionList: [
+          {
+            id: PATH.REGION,
+            title: "Miền",
+            icon: <Public />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.REGION),
+          },
+          {
+            id: PATH.TERRITORY,
+            title: "Vùng",
+            icon: <Map />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.TERRITORY),
+          },
+          {
+            id: PATH.PROVINCE,
+            title: "Tỉnh Thành",
+            icon: <Place />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.PROVINCE),
+          },
+          {
+            id: PATH.PLACE,
+            title: "Địa Điểm",
+            icon: <Apartment />,
+            role: [Role.SuperAdmin, Role.Admin],
+            onClick: () => changeDirection(PATH.PLACE),
+          },
+        ],
+      },
+    ];
+
+    const filterRole = actions.map((action) => {
+      const newAction = { ...action };
+      newAction.actionList = action.actionList.filter((val) =>
+        val.role.includes(user.role)
+      );
+      if (!newAction.actionList) {
+        return null;
+      }
+      return newAction;
+    });
+    return filterRole as ListActionItemProps[];
+  }, [changeDirection, user]);
 
   return (
     <Grid item xs={12} height={1}>
