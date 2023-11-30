@@ -40,6 +40,7 @@ import {
   getTerritoryList,
   updateTerritory,
 } from "src/apis/territory.api";
+import { getUserByRoles } from "src/apis/user.api";
 import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { useMasterContext } from "src/context/MasterContext";
 import { PATH } from "src/routes/path";
@@ -216,6 +217,14 @@ export function useCallAPIFind() {
     mutationFn: findPlaceImageByPlaceID,
   });
 
+  // User
+  const {
+    mutateAsync: requestFindUserByRoles,
+    isLoading: loadingFindUserByRoles,
+  } = useMutation({
+    mutationFn: getUserByRoles,
+  });
+
   return {
     requestFindProvinceByID,
     loadingFindProvince,
@@ -227,6 +236,8 @@ export function useCallAPIFind() {
     loadingFindPlace,
     requestFindPlaceImageStockByPlaceID,
     loadingFindPlaceImageStockByPlaceID,
+    requestFindUserByRoles,
+    loadingFindUserByRoles,
   };
 }
 

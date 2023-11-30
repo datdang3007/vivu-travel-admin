@@ -3,3 +3,5 @@ export * from "./ActionCell";
 export * from "./PostActionCell";
 export * from "./LinkCell";
 export * from "./ImageCell";
+export * from "./RoleCell";
+export * from "./UserActionCell";
