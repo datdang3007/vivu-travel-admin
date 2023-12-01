@@ -52,7 +52,7 @@ export const updateRegion = async ({ id, data }: UpdateRegionProps) => {
 };
 
 export const findRegionByID = async (id: string) => {
-  const res = await http.get(`${url}/${id}`);
+  const res = await http.get(`${url}/relations/${id}`);
   return res.data;
 };
 

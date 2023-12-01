@@ -65,7 +65,7 @@ export const ContentEditor = (props: Props) => {
 
   // Render post data to component:
   const renderContentData = useCallback(
-    () => contentData.map((val) => defineContentComponent(val)),
+    () => contentData?.map((val) => defineContentComponent(val)),
     [contentData, defineContentComponent]
   );
 

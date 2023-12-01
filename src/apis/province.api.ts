@@ -52,7 +52,7 @@ export const updateProvince = async ({ id, data }: UpdateProvinceProps) => {
 };
 
 export const findProvinceByID = async (id: string) => {
-  const res = await http.get(`${url}/${id}`);
+  const res = await http.get(`${url}/relations/${id}`);
   return res.data;
 };
 

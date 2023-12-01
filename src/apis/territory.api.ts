@@ -52,7 +52,7 @@ export const updateTerritory = async ({ id, data }: UpdateTerritoryProps) => {
 };
 
 export const findTerritoryByID = async (id: string) => {
-  const res = await http.get(`${url}/${id}`);
+  const res = await http.get(`${url}/relations/${id}`);
   return res.data;
 };
 

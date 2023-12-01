@@ -52,7 +52,7 @@ export const updatePlace = async ({ id, data }: UpdatePlaceProps) => {
 };
 
 export const findPlaceByID = async (id: string) => {
-  const res = await http.get(`${url}/${id}`);
+  const res = await http.get(`${url}/relations/${id}`);
   return res.data;
 };
 

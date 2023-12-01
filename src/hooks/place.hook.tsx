@@ -310,7 +310,7 @@ export const usePlaceEditHook = () => {
 
   useEffect(() => {
     requestFindPlaceByID(placeID).then((data) => {
-      const convertContents = data.contents.map(
+      const convertContents = data?.contents?.map(
         (content: ContentDataProps, idx: number) => {
           return {
             id: idx,
@@ -319,7 +319,7 @@ export const usePlaceEditHook = () => {
           };
         }
       );
-      const convertDataCategory = data.category.map((val: any) => {
+      const convertDataCategory = data?.category?.map((val: any) => {
         const result: {
           id: string | number;
           label: string;
