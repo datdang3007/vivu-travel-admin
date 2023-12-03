@@ -38,6 +38,9 @@ export const usePlaceImageStockHook = () => {
   // Toggle dialog select image:
   const handleOpenDialogSelectImage = useCallback(() => {
     setOpenDialogSelectImage(true);
+    setTimeout(() => {
+      if (fileInputLinkRef.current) fileInputLinkRef.current.focus();
+    }, 100);
   }, []);
   const handleCloseDialogSelectImage = useCallback(() => {
     setOpenDialogSelectImage(false);
