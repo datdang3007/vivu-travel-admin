@@ -2,7 +2,12 @@ import { MenuItem } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { authLogin, checkExistEmail, getUserProfile } from "src/apis/auth.api";
+import {
+  authLogin,
+  checkExistEmail,
+  getUserProfile,
+  updateRole,
+} from "src/apis/auth.api";
 import {
   getPlaceCategoryList,
   updatePlaceCategory,
@@ -59,6 +64,13 @@ export const useCallAPIAuth = () => {
   });
 
   const {
+    mutateAsync: requestUpdateUserRole,
+    isLoading: loadingForUpdateUserRole,
+  } = useMutation({
+    mutationFn: updateRole,
+  });
+
+  const {
     mutateAsync: requestGetUserProfile,
     isLoading: loadingForGetUserProfile,
   } = useMutation({
@@ -102,6 +114,8 @@ export const useCallAPIAuth = () => {
     loadingForCheckExistEmail,
     requestGetUserProfile,
     loadingForGetUserProfile,
+    requestUpdateUserRole,
+    loadingForUpdateUserRole,
   };
 };
 

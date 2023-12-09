@@ -7,7 +7,7 @@ export const PostManagerContainer = () => {
   return (
     <Container item xs={12}>
       <Grid item xs={12}>
-        <FormTitle title="Quản Lý Quản Trị Viên">
+        <FormTitle title="Duyệt Bài">
           <Grid item xs={12} mt={"40px"}>
             <PostList />
           </Grid>

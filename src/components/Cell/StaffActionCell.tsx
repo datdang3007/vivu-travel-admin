@@ -4,20 +4,20 @@ import { useCallback } from "react";
 import { MuiTableCellProps } from "src/types/MuiTable";
 
 type Props = {
-  onRemove?: (id: string) => void;
+  onRemove?: (email: string) => void;
 };
 
 export function StaffActionCell<T extends Record<string, any>>({
   onRemove,
 }: Props) {
   return function Cell({ row }: MuiTableCellProps<T>) {
-    const id = row.original.id;
+    const email = row.original.email;
 
     const onClickButtonRemove = useCallback(() => {
       if (onRemove) {
-        onRemove(id);
+        onRemove(email);
       }
-    }, [id]);
+    }, [email]);
 
     return (
       <Grid

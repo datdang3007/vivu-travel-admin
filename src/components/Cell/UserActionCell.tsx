@@ -1,12 +1,19 @@
-import { AccountBox, ContactMail, GppBad } from "@mui/icons-material";
+import {
+  AccountBox,
+  ContactMail,
+  GppBad,
+  AdminPanelSettings,
+} from "@mui/icons-material";
 import { Grid, IconButton, SxProps, Tooltip } from "@mui/material";
 import { ReactNode, useCallback, useMemo } from "react";
 import { Role } from "src/constants/role";
+import { useMasterContext } from "src/context/MasterContext";
 import { MuiTableCellProps } from "src/types/MuiTable";
 
 type Props = {
-  onChangeRole?: (id: string) => void;
-  onBlock?: (id: string) => void;
+  onChangeRole?: (email: string, role: number) => void;
+  onClickSetAdmin?: (email: string) => void;
+  onBlock?: (email: string) => void;
 };
 
 interface ChangeRoleProps {
@@ -17,11 +24,13 @@ interface ChangeRoleProps {
 
 export function UserActionCell<T extends Record<string, any>>({
   onChangeRole,
+  onClickSetAdmin,
   onBlock,
 }: Props) {
   return function Cell({ row }: MuiTableCellProps<T>) {
-    const id = row.original.id;
+    const email = row.original.email;
     const role = row.original.role.id;
+    const { user } = useMasterContext();
 
     const props = useMemo(() => {
       let result: ChangeRoleProps = { text: "" };
@@ -44,15 +53,21 @@ export function UserActionCell<T extends Record<string, any>>({
 
     const onClickButtonChangeRole = useCallback(() => {
       if (onChangeRole) {
-        onChangeRole(id);
+        onChangeRole(email, role);
       }
-    }, [id]);
+    }, [email, role]);
+
+    const onClickButtonSetAdmin = useCallback(() => {
+      if (onClickSetAdmin) {
+        onClickSetAdmin(email);
+      }
+    }, [email]);
 
     const onClickButtonBlock = useCallback(() => {
       if (onBlock) {
-        onBlock(id);
+        onBlock(email);
       }
-    }, [id]);
+    }, [email]);
 
     return (
       <Grid
@@ -68,6 +83,17 @@ export function UserActionCell<T extends Record<string, any>>({
             {props.icon}
           </IconButton>
         </Tooltip>
+
+        {user?.role === Role.SuperAdmin && (
+          <Tooltip title="Sửa vai trò thành quản trị viên">
+            <IconButton
+              onClick={onClickButtonSetAdmin}
+              sx={{ color: "#61A3BA" }}
+            >
+              <AdminPanelSettings />
+            </IconButton>
+          </Tooltip>
+        )}
 
         <Tooltip title="Chặn">
           <IconButton color="error" onClick={onClickButtonBlock}>

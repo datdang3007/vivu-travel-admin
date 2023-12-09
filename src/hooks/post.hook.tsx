@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ImageCell, TextCell } from "src/components/Cell";
-import { PostActionCell } from "src/components/Cell";
-import { IPost } from "src/interfaces/post.interface";
-import { useCallAPIUpdate, useCallApi } from "./common.hook";
-import { useMasterContext } from "src/context/MasterContext";
+import { ImageCell, PostActionCell, TextCell } from "src/components/Cell";
+import { PROCESS_ENV } from "src/constants/env";
 import { PostStatus } from "src/constants/post_status";
+import { useMasterContext } from "src/context/MasterContext";
+import { IPost } from "src/interfaces/post.interface";
 import { showAlertSuccess } from "src/utils/alert";
+import { useCallAPIUpdate, useCallApi } from "./common.hook";
 
 export const usePostListHook = () => {
   const { user } = useMasterContext();
@@ -13,7 +13,9 @@ export const usePostListHook = () => {
   const { postList, refetchPostList } = useCallApi();
   const [postData, setPostData] = useState<IPost[]>([]);
 
-  const handleActionView = useCallback((id: string) => {}, []);
+  const handleActionView = useCallback((id: string) => {
+    window.open(`${PROCESS_ENV.USER_PAGE_URL}/post-detail/${id}`, "_blank");
+  }, []);
 
   // Event approve post:
   const handleActionApproved = useCallback(
@@ -87,6 +89,7 @@ export const usePostListHook = () => {
         id: "button",
         header: "Thao Tác",
         Cell: PostActionCell({
+          onView: handleActionView,
           onApproved: handleActionApproved,
           onRejected: handleActionRejected,
         }),
@@ -95,7 +98,7 @@ export const usePostListHook = () => {
         enableGlobalFilter: false,
       },
     ],
-    [handleActionApproved, handleActionRejected]
+    [handleActionApproved, handleActionRejected, handleActionView]
   );
 
   useEffect(() => {

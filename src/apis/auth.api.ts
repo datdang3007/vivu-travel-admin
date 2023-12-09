@@ -7,6 +7,11 @@ export interface UpdatePlaceProps {
   data: IAuth;
 }
 
+export interface UpdateUserRoleProps {
+  user_email: string;
+  role_id: number;
+}
+
 export const authLogin = async (data: IAuth) => {
   const res = await http.post(`auth/login`, data);
   return res.data;
@@ -14,6 +19,26 @@ export const authLogin = async (data: IAuth) => {
 
 export const checkExistEmail = async (email: string) => {
   const res = await http.get(`user/checkExistEmail/${email}`);
+  return res.data;
+};
+
+export const updateRole = async ({
+  user_email,
+  role_id,
+}: UpdateUserRoleProps): Promise<IAuthUser | null> => {
+  const token = localStorage.getItem(LOCAL_STORAGE.AccessToken);
+  if (!token) {
+    return null;
+  }
+  const res = await http.patch(
+    `auth/update/role`,
+    { user_email, role_id },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 };
 
