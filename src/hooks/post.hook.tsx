@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ImageCell, PostActionCell, TextCell } from "src/components/Cell";
+import {
+  ImageCell,
+  PostActionCell,
+  StatusCell,
+  TextCell,
+} from "src/components/Cell";
 import { PROCESS_ENV } from "src/constants/env";
 import { PostStatus } from "src/constants/post_status";
 import { useMasterContext } from "src/context/MasterContext";
@@ -84,6 +89,12 @@ export const usePostListHook = () => {
         accessorKey: "creator.username",
         header: "Người Gửi",
         Cell: TextCell({}),
+      },
+      {
+        id: "status",
+        accessorKey: "status",
+        header: "Trạng thái",
+        Cell: StatusCell({}),
       },
       {
         id: "button",
