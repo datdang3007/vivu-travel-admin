@@ -5,12 +5,14 @@ import { useCallAPIAuth, useCallAPIFind } from "./common.hook";
 import { StaffActionCell } from "src/components/Cell/StaffActionCell";
 import { showAlertError, showAlertSuccess } from "src/utils/alert";
 import { useMasterContext } from "src/context/MasterContext";
+import { useLoadingContext } from "src/provider/loading.provider";
 
 export const useUserListHook = () => {
   const { user } = useMasterContext();
   const { requestFindUserByRoles } = useCallAPIFind();
   const [userData, setUserData] = useState<any[]>([]);
   const { requestUpdateUserRole } = useCallAPIAuth();
+  const { setIsLoading } = useLoadingContext();
 
   const onChangeRole = useCallback(
     (email: string, role: number) => {
@@ -111,10 +113,13 @@ export const useUserListHook = () => {
 
   useEffect(() => {
     const roles = [Role.User, Role.Teller];
+
+    setIsLoading(true);
     requestFindUserByRoles(roles.join(",")).then((res) => {
       setUserData(res);
+      setIsLoading(false);
     });
-  }, [requestFindUserByRoles]);
+  }, [requestFindUserByRoles, setIsLoading]);
 
   return {
     userData,
@@ -127,6 +132,7 @@ export const useStaffListHook = () => {
   const { requestFindUserByRoles } = useCallAPIFind();
   const [staffData, setStaffData] = useState<any[]>([]);
   const { requestUpdateUserRole } = useCallAPIAuth();
+  const { setIsLoading } = useLoadingContext();
 
   const onRemove = useCallback(
     (email: string) => {
@@ -186,10 +192,13 @@ export const useStaffListHook = () => {
 
   useEffect(() => {
     const roles = [Role.Admin];
+
+    setIsLoading(true);
     requestFindUserByRoles(roles.join(",")).then((res) => {
       setStaffData(res);
+      setIsLoading(false);
     });
-  }, [requestFindUserByRoles]);
+  }, [requestFindUserByRoles, setIsLoading]);
 
   return {
     staffData,

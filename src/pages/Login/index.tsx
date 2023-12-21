@@ -17,6 +17,7 @@ import { InputTextField } from "src/components/Form";
 import { LOGO_BRAND } from "src/constants/img_common";
 import { useCallAPIAuth } from "src/hooks/common.hook";
 import { IAuth } from "src/interfaces";
+import { useLoadingContext } from "src/provider/loading.provider";
 import { rules } from "src/utils/validation";
 
 export interface LoginProps {
@@ -28,6 +29,7 @@ export const Login = () => {
   const theme = useTheme();
   const { validateEmail, validatePassword } = rules;
   const [showPassword, setShowPassword] = useState(false);
+  const { setIsLoading } = useLoadingContext();
 
   const { requestLogin } = useCallAPIAuth();
 
@@ -41,9 +43,12 @@ export const Login = () => {
 
   const handleSubmit = useCallback(
     (data: any) => {
-      requestLogin(data);
+      setIsLoading(true);
+      requestLogin(data).then(() => {
+        setIsLoading(false);
+      });
     },
-    [requestLogin]
+    [requestLogin, setIsLoading]
   );
 
   const methods = useForm<IAuth>({

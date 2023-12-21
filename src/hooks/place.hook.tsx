@@ -16,6 +16,8 @@ import {
   useNavigateCRUD,
   useSelectHook,
 } from "./common.hook";
+import { useLoadingContext } from "src/provider/loading.provider";
+import { PROCESS_ENV } from "src/constants/env";
 
 const url = PATH.PLACE;
 
@@ -24,10 +26,12 @@ export const usePlaceListHook = () => {
   const { PageCreate, PageEdit } = useNavigateCRUD(url);
   const {
     placeList,
+    loadingPlaceList,
     refetchPlaceList,
     placeCategoryList,
     refetchPlaceCategoryList,
   } = useCallApi();
+  const { setIsLoading } = useLoadingContext();
   const { requestDeletePlace } = useCallAPIDelete();
   const { requestUpdatePlaceCategory } = useCallAPIUpdate();
   const [placeData, setPlaceData] = useState<any[]>([]);
@@ -44,6 +48,11 @@ export const usePlaceListHook = () => {
   }, []);
   const handleCloseDialogPlaceCategory = useCallback(() => {
     setOpenDialogPlaceCategory(false);
+  }, []);
+
+  // EVENT WHEN CLICK BUTTON VIEW:
+  const onView = useCallback((id: string) => {
+    window.open(`${PROCESS_ENV.USER_PAGE_URL}/place/${id}`, "_blank");
   }, []);
 
   // EVENT WHEN CLICK BUTTON SAVE IN DIALOG PLACE CATEGORY:
@@ -155,6 +164,7 @@ export const usePlaceListHook = () => {
         id: "button",
         header: "Thao Tác",
         Cell: ActionCell({
+          onView: onView,
           onEdit: handleActionEdit,
           onDelete: handleActionDelete,
         }),
@@ -163,7 +173,7 @@ export const usePlaceListHook = () => {
         enableGlobalFilter: false,
       },
     ],
-    [handleActionDelete, handleActionEdit]
+    [handleActionDelete, handleActionEdit, onView]
   );
 
   useEffect(() => {
@@ -182,6 +192,10 @@ export const usePlaceListHook = () => {
     setPlaceCategoryData(convertData);
     setCurrentPlaceCategoryData(placeCategoryList);
   }, [placeCategoryList]);
+
+  useEffect(() => {
+    setIsLoading(loadingPlaceList);
+  }, [loadingPlaceList, setIsLoading]);
 
   return {
     placeData,
@@ -273,6 +287,7 @@ export const usePlaceEditHook = () => {
   const { PageList } = useNavigateCRUD(url);
   const { requestFindPlaceByID } = useCallAPIFind();
   const { requestCreatePlace } = useCallAPICreate();
+  const { setIsLoading } = useLoadingContext();
   const { SelectField: provinceOptionComponent } = useSelectHook(provinceList);
   const { autocompleteOptions: placeCategoryOptions } =
     useSelectHook(placeCategoryList);
@@ -298,8 +313,8 @@ export const usePlaceEditHook = () => {
         const dataSubmit = { ...data, contents: contentData };
         requestCreatePlace(dataSubmit).then(() => {
           showAlertSuccess(
-            "Tạo mới thành công",
-            "đã tạo Địa Điểm mới thành công!"
+            "Cập nhật thành công",
+            "đã câp nhật Địa Điểm mới thành công!"
           );
           setTimeout(() => PageList(), 2000);
         });
@@ -309,6 +324,7 @@ export const usePlaceEditHook = () => {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     requestFindPlaceByID(placeID).then((data) => {
       const convertContents = data?.contents?.map(
         (content: ContentDataProps, idx: number) => {
@@ -337,8 +353,9 @@ export const usePlaceEditHook = () => {
       };
       setContentData(convertContents);
       reset(convertData);
+      setIsLoading(false);
     });
-  }, [placeID, requestFindPlaceByID, reset]);
+  }, [placeID, requestFindPlaceByID, reset, setIsLoading]);
 
   return {
     formEdit,

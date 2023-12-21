@@ -20,7 +20,7 @@ export const TerritoryEditComponent = () => {
         <Button startIcon={<KeyboardBackspace />} onClick={PageList}>
           <Typography textTransform={"none"}>Trở lại</Typography>
         </Button>
-        <FormTitle title="Tạo Vùng Mới">
+        <FormTitle title="Sửa Vùng">
           <FormProvider {...formEdit}>
             <Grid
               item

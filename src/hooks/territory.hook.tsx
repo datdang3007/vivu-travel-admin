@@ -16,14 +16,23 @@ import {
   useNavigateCRUD,
   useSelectHook,
 } from "./common.hook";
+import { useLoadingContext } from "src/provider/loading.provider";
+import { PROCESS_ENV } from "src/constants/env";
 
 const url = PATH.TERRITORY;
 
 // Hook for list page:
 export const useTerritoryListHook = () => {
   const { PageCreate, PageEdit } = useNavigateCRUD(url);
-  const { territoryList, refetchTerritoryList } = useCallApi();
+  const { territoryList, refetchTerritoryList, loadingTerritoryList } =
+    useCallApi();
   const { requestDeleteTerritory } = useCallAPIDelete();
+  const { setIsLoading } = useLoadingContext();
+
+  // EVENT WHEN CLICK BUTTON VIEW:
+  const onView = useCallback((id: string) => {
+    window.open(`${PROCESS_ENV.USER_PAGE_URL}/territory/${id}`, "_blank");
+  }, []);
 
   // EVENT WHEN CLICK BUTTON DELETE:
   const onDelete = useCallback(
@@ -53,13 +62,18 @@ export const useTerritoryListHook = () => {
             name={val.name}
             slogan={val.slogan}
             img={val.image}
+            onView={() => onView(val.id.toString())}
             onEdit={() => PageEdit(val.id.toString())}
             onDelete={() => onDelete(val.id.toString())}
           />
         </Grid>
       )),
-    [PageEdit, onDelete, territoryList]
+    [PageEdit, onDelete, onView, territoryList]
   );
+
+  useEffect(() => {
+    setIsLoading(loadingTerritoryList);
+  }, [loadingTerritoryList, setIsLoading]);
 
   return { renderCardComponent, PageCreate };
 };
@@ -83,10 +97,7 @@ export const useTerritoryCreateHook = () => {
     useCallback(
       (data: any) => {
         requestCreateTerritory(data).then(() => {
-          showAlertSuccess(
-            "Tạo mới thành công",
-            "đã tạo Tỉnh Thành mới thành công!"
-          );
+          showAlertSuccess("Tạo mới thành công", "đã tạo Vùng mới thành công!");
           setTimeout(() => PageList(), 2000);
         });
       },
@@ -106,6 +117,7 @@ export const useTerritoryEditHook = () => {
   const { requestFindTerritoryByID } = useCallAPIFind();
   const { requestUpdateTerritory } = useCallAPIUpdate();
   const { SelectField: regionOptionComponent } = useSelectHook(regionList);
+  const { setIsLoading } = useLoadingContext();
 
   const formEdit = useForm({
     defaultValues: {
@@ -136,11 +148,13 @@ export const useTerritoryEditHook = () => {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     requestFindTerritoryByID(territoryID).then((data) => {
       const convertData = { ...data, region: data.region.id };
       reset(convertData);
+      setIsLoading(false);
     });
-  }, [requestFindTerritoryByID, reset, territoryID]);
+  }, [requestFindTerritoryByID, reset, setIsLoading, territoryID]);
 
   return { formEdit, onSubmit, PageList, regionOptionComponent };
 };

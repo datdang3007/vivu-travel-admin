@@ -15,14 +15,22 @@ import {
   useCallApi,
   useNavigateCRUD,
 } from "./common.hook";
+import { useLoadingContext } from "src/provider/loading.provider";
+import { PROCESS_ENV } from "src/constants/env";
 
 const url = PATH.REGION;
 
 // Hook for list page:
 export const useRegionListHook = () => {
   const { PageCreate, PageEdit } = useNavigateCRUD(url);
-  const { regionList, refetchRegionList } = useCallApi();
+  const { regionList, refetchRegionList, loadingRegionList } = useCallApi();
   const { requestDeleteRegion } = useCallAPIDelete();
+  const { setIsLoading } = useLoadingContext();
+
+  // EVENT WHEN CLICK BUTTON VIEW:
+  const onView = useCallback((id: string) => {
+    window.open(`${PROCESS_ENV.USER_PAGE_URL}/region/${id}`, "_blank");
+  }, []);
 
   // EVENT WHEN CLICK BUTTON DELETE:
   const onDelete = useCallback(
@@ -52,13 +60,18 @@ export const useRegionListHook = () => {
             name={val.name}
             slogan={val.slogan}
             img={val.image}
+            onView={() => onView(val.id.toString())}
             onEdit={() => PageEdit(val.id.toString())}
             onDelete={() => onDelete(val.id.toString())}
           />
         </Grid>
       )),
-    [PageEdit, onDelete, regionList]
+    [PageEdit, onDelete, onView, regionList]
   );
+
+  useEffect(() => {
+    setIsLoading(loadingRegionList);
+  }, [loadingRegionList, setIsLoading]);
 
   return { renderCardComponent, PageCreate };
 };
@@ -94,6 +107,7 @@ export const useRegionEditHook = () => {
   const { PageList } = useNavigateCRUD(url);
   const { requestFindRegionByID } = useCallAPIFind();
   const { requestUpdateRegion } = useCallAPIUpdate();
+  const { setIsLoading } = useLoadingContext();
 
   const formEdit = useForm();
 
@@ -120,10 +134,12 @@ export const useRegionEditHook = () => {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     requestFindRegionByID(regionID).then((data) => {
       reset(data);
+      setIsLoading(false);
     });
-  }, [regionID, requestFindRegionByID, reset]);
+  }, [regionID, requestFindRegionByID, reset, setIsLoading]);
 
   return { formEdit, PageList, onSubmit };
 };

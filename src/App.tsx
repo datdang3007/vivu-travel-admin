@@ -4,6 +4,8 @@ import { MasterProvider } from "./context/MasterContext";
 import useRouteElements from "./routes/useRouteElements";
 import theme from "./theme";
 import React from "react";
+import { LoadingProvider } from "./provider/loading.provider";
+import { LoadingModule } from "./components/Loading";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -13,7 +15,12 @@ export default function App() {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
-          <MasterProvider>{routeElements}</MasterProvider>
+          <MasterProvider>
+            <LoadingProvider>
+              <LoadingModule />
+              {routeElements}
+            </LoadingProvider>
+          </MasterProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </React.StrictMode>

@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import { Navigate, Outlet, RouteObject, useRoutes } from "react-router-dom";
-import { LoadingModule } from "../components/Loading";
 import { Login } from "../pages";
 import protectedRoute from "./MainRoute";
 import { PATH } from "./path";
 import { LOCAL_STORAGE } from "src/constants/local_storage";
 import { Role } from "src/constants/role";
 import { showAlertError } from "src/utils/alert";
+import { LoadingModule } from "src/components/Loading";
 
 const RoleProtects = [Role.SuperAdmin, Role.Admin];
 

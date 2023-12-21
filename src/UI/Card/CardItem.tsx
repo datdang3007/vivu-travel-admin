@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 export const CardItem = (props: CardItemProps) => {
-  const { name, slogan, img, onEdit, onDelete } = props;
+  const { name, slogan, img, onView, onEdit, onDelete } = props;
 
   return (
     <CardComponent>
@@ -56,7 +56,12 @@ export const CardItem = (props: CardItemProps) => {
                 Sửa
               </Typography>
             </ButtonEdit>
-            <ButtonDetail variant="contained" size="small" color="primary">
+            <ButtonDetail
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={onView}
+            >
               <Typography fontSize={14} textTransform={"none"}>
                 Chi Tiết
               </Typography>

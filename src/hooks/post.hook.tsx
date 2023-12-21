@@ -11,12 +11,14 @@ import { useMasterContext } from "src/context/MasterContext";
 import { IPost } from "src/interfaces/post.interface";
 import { showAlertSuccess } from "src/utils/alert";
 import { useCallAPIUpdate, useCallApi } from "./common.hook";
+import { useLoadingContext } from "src/provider/loading.provider";
 
 export const usePostListHook = () => {
   const { user } = useMasterContext();
   const { requestUpdatePost } = useCallAPIUpdate();
-  const { postList, refetchPostList } = useCallApi();
+  const { postList, refetchPostList, loadingPostList } = useCallApi();
   const [postData, setPostData] = useState<IPost[]>([]);
+  const { setIsLoading } = useLoadingContext();
 
   const handleActionView = useCallback((id: string) => {
     window.open(`${PROCESS_ENV.USER_PAGE_URL}/post-detail/${id}`, "_blank");
@@ -115,6 +117,10 @@ export const usePostListHook = () => {
   useEffect(() => {
     setPostData(postList);
   }, [postList]);
+
+  useEffect(() => {
+    setIsLoading(loadingPostList);
+  }, [loadingPostList, setIsLoading]);
 
   return { postData, columns };
 };

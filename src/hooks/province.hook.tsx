@@ -15,6 +15,8 @@ import {
   useNavigateCRUD,
   useSelectHook,
 } from "./common.hook";
+import { useLoadingContext } from "src/provider/loading.provider";
+import { PROCESS_ENV } from "src/constants/env";
 
 const url = PATH.PROVINCE;
 
@@ -23,7 +25,14 @@ export const useProvinceListHook = () => {
   const [provinceData, setProvinceData] = useState<IProvince[]>([]);
   const { PageEdit, PageCreate } = useNavigateCRUD(url);
   const { requestDeleteProvince } = useCallAPIDelete();
-  const { provinceList, refetchProvinceList } = useCallApi();
+  const { provinceList, refetchProvinceList, loadingProvinceList } =
+    useCallApi();
+  const { setIsLoading } = useLoadingContext();
+
+  // EVENT WHEN CLICK BUTTON VIEW:
+  const onView = useCallback((id: string) => {
+    window.open(`${PROCESS_ENV.USER_PAGE_URL}/province/${id}`, "_blank");
+  }, []);
 
   const handleActionEdit = useCallback(
     (id: string) => {
@@ -87,6 +96,7 @@ export const useProvinceListHook = () => {
         id: "button",
         header: "Thao Tác",
         Cell: ActionCell({
+          onView: onView,
           onEdit: handleActionEdit,
           onDelete: handleActionDelete,
         }),
@@ -96,12 +106,16 @@ export const useProvinceListHook = () => {
         size: 140,
       },
     ],
-    [handleActionDelete, handleActionEdit]
+    [handleActionDelete, handleActionEdit, onView]
   );
 
   useEffect(() => {
     setProvinceData(provinceList);
   }, [provinceList]);
+
+  useEffect(() => {
+    setIsLoading(loadingProvinceList);
+  }, [loadingProvinceList, setIsLoading]);
 
   return {
     columns,
@@ -153,6 +167,7 @@ export const useProvinceEditHook = () => {
   const { territoryList } = useCallApi();
   const { requestFindProvinceByID } = useCallAPIFind();
   const { requestUpdateProvince } = useCallAPIUpdate();
+  const { setIsLoading } = useLoadingContext();
   const { SelectField: territoryOptionComponent } =
     useSelectHook(territoryList);
 
@@ -185,11 +200,13 @@ export const useProvinceEditHook = () => {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     requestFindProvinceByID(provinceID).then((data) => {
       const convertData = { ...data, territory: data.territory.id };
       reset(convertData);
+      setIsLoading(false);
     });
-  }, [provinceID, requestFindProvinceByID, reset]);
+  }, [provinceID, requestFindProvinceByID, reset, setIsLoading]);
 
   return { formEdit, onSubmit, PageList, territoryOptionComponent };
 };

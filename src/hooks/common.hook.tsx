@@ -96,7 +96,7 @@ export const useCallAPIAuth = () => {
         localStorage.setItem(LOCAL_STORAGE.AccessToken, access_token);
         requestGetUserProfile().then((data) => {
           if (data) {
-            navigate(PATH.STATISTICS);
+            navigate(PATH.USER_MANAGER);
           }
         });
       },
@@ -144,51 +144,65 @@ export const useNavigateCRUD = (url: string) => {
 // Hook call API list:
 export const useCallApi = () => {
   // Region
-  const { data: regionList = [], refetch: refetchRegionList } = useQuery(
-    ["getRegionList"],
-    getRegionList
-  );
+  const {
+    data: regionList = [],
+    refetch: refetchRegionList,
+    isLoading: loadingRegionList,
+  } = useQuery(["getRegionList"], getRegionList);
 
   // Territory
-  const { data: territoryList = [], refetch: refetchTerritoryList } = useQuery(
-    ["getTerritoryList"],
-    getTerritoryList
-  );
+  const {
+    data: territoryList = [],
+    refetch: refetchTerritoryList,
+    isLoading: loadingTerritoryList,
+  } = useQuery(["getTerritoryList"], getTerritoryList);
 
   // Province
-  const { data: provinceList = [], refetch: refetchProvinceList } = useQuery(
-    ["getProvinceList"],
-    getProvinceList
-  );
+  const {
+    data: provinceList = [],
+    refetch: refetchProvinceList,
+    isLoading: loadingProvinceList,
+  } = useQuery(["getProvinceList"], getProvinceList);
 
   // Place
-  const { data: placeList = [], refetch: refetchPlaceList } = useQuery(
-    ["getPlaceList"],
-    getPlaceList
-  );
+  const {
+    data: placeList = [],
+    refetch: refetchPlaceList,
+    isLoading: loadingPlaceList,
+  } = useQuery(["getPlaceList"], getPlaceList);
 
   // Place Category
-  const { data: placeCategoryList = [], refetch: refetchPlaceCategoryList } =
-    useQuery(["getPlaceCategoryList"], getPlaceCategoryList);
+  const {
+    data: placeCategoryList = [],
+    refetch: refetchPlaceCategoryList,
+    isLoading: loadingPlaceCategoryList,
+  } = useQuery(["getPlaceCategoryList"], getPlaceCategoryList);
 
   // Place
-  const { data: postList = [], refetch: refetchPostList } = useQuery(
-    ["getPostList"],
-    getPostList
-  );
+  const {
+    data: postList = [],
+    refetch: refetchPostList,
+    isLoading: loadingPostList,
+  } = useQuery(["getPostList"], getPostList);
 
   return {
     regionList,
+    loadingRegionList,
     refetchRegionList,
     territoryList,
+    loadingTerritoryList,
     refetchTerritoryList,
     provinceList,
+    loadingProvinceList,
     refetchProvinceList,
     placeList,
+    loadingPlaceList,
     refetchPlaceList,
     placeCategoryList,
+    loadingPlaceCategoryList,
     refetchPlaceCategoryList,
     postList,
+    loadingPostList,
     refetchPostList,
   };
 };

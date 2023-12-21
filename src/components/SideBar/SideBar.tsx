@@ -1,7 +1,6 @@
 import {
   AdminPanelSettings,
   Apartment,
-  BarChart,
   Map,
   People,
   Place,
@@ -41,18 +40,18 @@ export const SideBar = () => {
   const ListActionComponent = useMemo(() => {
     if (!user) return [];
     const actions = [
-      {
-        title: "Thống Kê",
-        actionList: [
-          {
-            id: PATH.STATISTICS,
-            title: "Thống kê",
-            icon: <BarChart />,
-            role: [Role.SuperAdmin, Role.Admin],
-            onClick: () => changeDirection(PATH.STATISTICS),
-          },
-        ],
-      },
+      // {
+      //   title: "Thống Kê",
+      //   actionList: [
+      //     {
+      //       id: PATH.STATISTICS,
+      //       title: "Thống kê",
+      //       icon: <BarChart />,
+      //       role: [Role.SuperAdmin, Role.Admin],
+      //       onClick: () => changeDirection(PATH.STATISTICS),
+      //     },
+      //   ],
+      // },
       {
         title: "Tài Khoản",
         actionList: [

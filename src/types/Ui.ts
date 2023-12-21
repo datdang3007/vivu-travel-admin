@@ -10,6 +10,7 @@ export interface CardItemProps {
   name: string;
   slogan: string;
   img: string;
+  onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
